@@ -1,4 +1,4 @@
-# Step-by-step installation instructions
+# Installation instructions
 **a. Create a conda virtual environment and activate it.**
 ```shell
 conda create -n occ python=3.7 -y
