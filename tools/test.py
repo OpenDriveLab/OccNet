@@ -265,7 +265,7 @@ def main():
                     dataset.evaluate_occ_iou(occupancy_results, flow_results, 
                                              show_dir=args.show_dir, occ_threshold=occ_threshold)
                 
-                if 'bbox' in args.eval and index == len(occ_thresholds)-1 and bbox_predictions is not None:
+                if 'bbox' in args.eval and bbox_predictions is not None:
                     # evaluate in the whole dataset for NDS
                     print(dataset.evaluate(bbox_predictions, **eval_kwargs))
 
