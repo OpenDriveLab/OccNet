@@ -64,5 +64,5 @@ python test.py
 - Prepare pretrained model
 ```
 cd OccNet/ckpts
-download https://huggingface.co/OpenGVLab/InternImage/resolve/main/mask_rcnn_internimage_s_fpn_3x_coco.pth
+wget https://huggingface.co/OpenGVLab/InternImage/resolve/main/mask_rcnn_internimage_s_fpn_3x_coco.pth
 ```

@@ -293,7 +293,7 @@ def visualize_flow(points, labels, flow_values, flow_labels, ego_dict):
         scene.scene.render()
 
     save_fig = mlab.screenshot()
-    mlab.close()  # this step is necessary
+    mlab.close()
     return save_fig
 
 
