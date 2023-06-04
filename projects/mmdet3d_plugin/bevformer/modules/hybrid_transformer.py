@@ -192,10 +192,6 @@ class HybridPerceptionTransformer(BaseModule):
         
         for block in self.image_feature_maps:
             xavier_init(block, distribution='uniform', bias=0.)
-        # xavier_init(self.image_feature_map_1_2, distribution='uniform', bias=0.)
-        # xavier_init(self.image_feature_map_1_4, distribution='uniform', bias=0.)
-        # xavier_init(self.image_feature_map_1_8, distribution='uniform', bias=0.)
-        # xavier_init(self.image_feature_map_1_16, distribution='uniform', bias=0.)
 
     @auto_fp16(apply_to=('mlvl_feats', 'bev_queries', 'prev_bev', 'bev_pos'))
     def get_voxel_features(
@@ -266,15 +262,10 @@ class HybridPerceptionTransformer(BaseModule):
             (1,)), spatial_shapes.prod(1).cumsum(0)[:-1]))
 
         feat_flatten_original = feat_flatten.permute(0, 2, 1, 3)  # (num_cam, H*W, bs, embed_dims)
-        # feat_flatten_map1_2 = self.image_feature_map_1_2(feat_flatten_original)
-        # feat_flatten_map1_4 = self.image_feature_map_1_4(feat_flatten_original)
-        # feat_flatten_map1_8 = self.image_feature_map_1_8(feat_flatten_original)
-        # feat_flatten_map1_16 = self.image_feature_map_1_16(feat_flatten_original)
-        
+
         block_features = []
         for block_index in range(self.encoder_block_num):
             # encoder： BEV -> Voxeli -> Voxelj -> Voxelk
-            # print('bev_query.shape:', block_index, bev_queries.shape)
             block_bev_z = self.feature_map_z[block_index]
             # block_embed_dims = self.encoder_embed_dims[block_index]
             if block_bev_z == 1:
@@ -286,16 +277,6 @@ class HybridPerceptionTransformer(BaseModule):
             pos = self.positional_encodings[block_index](bev_mask).to(bev_queries.dtype)  # (bs, embed_dims, h, w)
             pos = pos.flatten(2).permute(2, 0, 1)  # (query_num, bs, embed_dims)
             
-            # if block_embed_dims == self.embed_dims:
-            #     feat_flatten = feat_flatten_original
-            # elif block_embed_dims*2 == self.embed_dims:
-            #     feat_flatten = feat_flatten_map1_2
-            # elif block_embed_dims*4 == self.embed_dims:
-            #     feat_flatten = feat_flatten_map1_4
-            # elif block_embed_dims*8 == self.embed_dims:
-            #     feat_flatten = feat_flatten_map1_8
-            # elif block_embed_dims*16 == self.embed_dims:
-            #     feat_flatten = feat_flatten_map1_16
             feat_flatten = self.image_feature_maps[block_index](feat_flatten_original)
             
             if prev_bev is not None:  # (bs, num_query, embed_dims)

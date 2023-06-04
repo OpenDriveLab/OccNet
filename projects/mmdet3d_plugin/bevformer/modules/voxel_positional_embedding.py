@@ -29,7 +29,7 @@ class VoxelLearnedPositionalEncoding(BaseModule):
                  z_num_embed=16,
                  init_cfg=dict(type='Uniform', layer='Embedding')):
         super(VoxelLearnedPositionalEncoding, self).__init__(init_cfg)
-        # for 3D positional embedding:  x, y, z三个方向的embedding直接相加，不拼接
+        # for 3D positional embedding: 
         self.num_feats = num_feats
         num_feats = num_feats*2
         self.row_embed = nn.Embedding(row_num_embed, num_feats)

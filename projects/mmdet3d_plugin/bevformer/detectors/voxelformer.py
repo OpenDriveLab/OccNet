@@ -317,7 +317,6 @@ class VoxelFormer(MVXTwoStageDetector):
         return losses
 
     def forward_test(self, img_metas, img=None, points=None, **kwargs):
-        # img[0].shape (bs, cam_num, 3, 928, 1600)
         for var, name in [(img_metas, 'img_metas')]:
             if not isinstance(var, list):
                 raise TypeError('{} must be a list, but got {}'.format(

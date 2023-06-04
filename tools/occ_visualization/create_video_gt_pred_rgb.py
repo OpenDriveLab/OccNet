@@ -202,7 +202,7 @@ def visualize_occ(points, labels, ego_dict):
         scene.scene.render()
 
     save_fig = mlab.screenshot()
-    mlab.close()  # this step is necessary
+    mlab.close() 
     return save_fig
 
 
@@ -252,11 +252,11 @@ def visualize_flow(points, labels, flow_values, flow_labels, ego_dict):
                                 )
     flow_colors_map = np.array(
         [   
-            [0, 255, 255, 255],  #  0 stationary  蓝绿色
+            [0, 255, 255, 255],  #  0 stationary  
             [255, 0, 0, 255],  #  1 motion front 
             [0, 255, 0, 255],  #  2 motion left 
             [0, 0, 255, 255],  #   3 motion back
-            [255, 0, 255, 255],  # 4 motion right  Magenta 品红
+            [255, 0, 255, 255],  # 4 motion right  Magenta 
             
         ]
     ).astype(np.uint8)

@@ -30,10 +30,9 @@ The annotations is defined in the LiDAR cooridinate system including 16 classes.
   
 | Type |  Info |
 | :----: | :----: |
-| train           | 28,130 |
-| val             | 6,019 |
+| train \| val          | 28130 \| 6019 |
+| annotations             | occupancy \|  flow |
 | cameras         | 6 |
-| voxel size      | 0.5m |
 | range           | [-50m, -50m, -5m, 50m, 50m, 3m]|
 | volume size     | [200, 200, 16]|
 | #classes        | 0 - 15 |
@@ -42,11 +41,12 @@ The annotations is defined in the LiDAR cooridinate system including 16 classes.
 
 1.Dowload train and validataion dataset and put it in the `data` folder
 
-| Version | Google Drive <img src="https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png" alt="Google Drive" width="18"/> | Baidu Cloud <img src="https://nd-static.bdstatic.com/m-static/v20-main/favicon-main.ico" alt="Baidu Yun" width="18"/> | Size |
-| :---: | :---: | :---: | :---: |
-| occ_gt_release_v1_0  | TBD | TBD | - |
+| Version | voxel size | Google Drive <img src="https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png" alt="Google Drive" width="18"/> | Baidu Cloud <img src="https://nd-static.bdstatic.com/m-static/v20-main/favicon-main.ico" alt="Baidu Yun" width="18"/> | Size |
+| :---: | :---: | :---: | :---: | :---: |
+| occ_gt_release_v1_0  |  0.5m| TBD | [train_val](https://pan.baidu.com/s/1O4iCdY7DOWts9KAIuRNT2A?pwd=hgk2) | ~15G |
 
-2. unzip the file
+
+2.unzip the file
 ```
 tar -zxvf occ_gt_release_v1_0.tar.gz
 ```
@@ -61,7 +61,7 @@ OccNet
 │   │   ├── occ_gt_val.json
 ```
 
-3. Merge 3D detection and 3D occupancy dataset
+3.Merge 3D detection and 3D occupancy dataset
 ```
 python tools/create_data_with_occ.py
 ```
@@ -69,10 +69,14 @@ Using the above code will generate the following files
 `
 data/occ_gt_release_v1_0/nuscenes_infos_temporal_{train,val}_occ_gt.pkl
 `
-We also provide the downlink of [nuscenes_infos_temporal_train_occ_gt.pkl]() and 
-[nuscenes_infos_temporal_val_occ_gt.pkl]()
 
-4. The data structure of the project is organized as:
+We also provide the downlink of theses pkls.
+| Version | Google Drive <img src="https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png" alt="Google Drive" width="18"/> | Baidu Cloud <img src="https://nd-static.bdstatic.com/m-static/v20-main/favicon-main.ico" alt="Baidu Yun" width="18"/> | 
+| :---: | :---: | :---: | 
+| occ_gt_release_v1_0  | TBD | [train](https://pan.baidu.com/s/1vzFGs6g9g7f_08QrItfVGw?pwd=djsh) \| [val](https://pan.baidu.com/s/1flOglbPh5BDb0i8QfpcIbQ?pwd=ntys) | 
+
+
+4.The data structure of the project is organized as:
 ```
 OccNet
 ├── data/

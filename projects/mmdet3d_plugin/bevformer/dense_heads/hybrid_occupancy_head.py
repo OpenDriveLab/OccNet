@@ -340,10 +340,6 @@ class HybridFormerOccupancyHead(DETRHead):
             object_query_embeds = self.query_embedding.weight.to(dtype)
         bev_queries = self.bev_embedding.weight.to(dtype)  # start from the bev embeddings, end with the voxel embeddings
 
-        # bev_mask = torch.zeros((bs, self.bev_h, self.bev_w),
-        #                        device=bev_queries.device).to(dtype)
-        # bev_pos = self.positional_encoding(bev_mask).to(dtype)  # (bs, embed_dims, h, w)
-        
         prev_bevs = None
 
         if only_bev:  # only use encoder to obtain BEV features, TODO: refine the workaround
@@ -355,7 +351,6 @@ class HybridFormerOccupancyHead(DETRHead):
                 self.bev_w,
                 grid_length=(self.real_h / self.bev_h,
                              self.real_w / self.bev_w),
-                # bev_pos=bev_pos,
                 img_metas=img_metas,
                 prev_bev=prev_bev,
             )  # [bs, num_query, embed_dims]
@@ -369,7 +364,6 @@ class HybridFormerOccupancyHead(DETRHead):
                     self.bev_w,
                     grid_length=(self.real_h / self.bev_h,
                                  self.real_w / self.bev_w),
-                    # bev_pos=bev_pos,
                     img_metas=img_metas,
                     prev_bev=prev_bev,
                 )
@@ -441,7 +435,6 @@ class HybridFormerOccupancyHead(DETRHead):
                 self.bev_w,
                 grid_length=(self.real_h / self.bev_h,
                             self.real_w / self.bev_w),
-                # bev_pos=bev_pos,
                 reg_branches=self.reg_branches if self.with_box_refine else None,  # noqa:E501
                 cls_branches=self.cls_branches if self.as_two_stage else None,
                 img_metas=img_metas,

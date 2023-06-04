@@ -202,7 +202,6 @@ class BEVFormerOccupancyHead(DETRHead):
         
         # upsampling branch
         if self.use_fine_occ:
-            # self.up_sample = nn.Upsample(size=(self.occ_ydim, self.occ_xdim), mode='bilinear', align_corners=True)
             self.up_sample = nn.Upsample(size=(self.occ_zdim, self.occ_ydim, self.occ_xdim), mode='trilinear', align_corners=True)
 
         # flow branch: considering the foreground objects
@@ -335,7 +334,7 @@ class BEVFormerOccupancyHead(DETRHead):
         else:
             raise NotImplementedError
 
-        if only_bev:  # only use encoder to obtain BEV features, TODO: refine the workaround
+        if only_bev:  # only use encoder to obtain BEV features
             return self.transformer.get_bev_features(
                 mlvl_feats,
                 bev_queries,

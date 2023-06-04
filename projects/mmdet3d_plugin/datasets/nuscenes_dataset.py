@@ -332,9 +332,7 @@ class CustomNuScenesDataset(NuScenesDataset):
         if show_dir: 
             scene_names = [info['scene_name'] for info in self.data_infos]
             scene_names = np.unique(scene_names)
-            save_scene_names = scene_names[:3]
-            # if len(occupancy_results) == 6019:
-            #     save_scene_names=['scene-0099', 'scene-0105', 'scene-0276', 'scene-0626']
+            save_scene_names = scene_names[:5]
             print('save_scene_names:', save_scene_names)
         
         # set the metrics
@@ -377,7 +375,6 @@ class CustomNuScenesDataset(NuScenesDataset):
                 save_result = False
                 if scene_name in save_scene_names:
                     save_result = True
-                save_result = True
                 if save_result:
                     occ_gt_save_dir = os.path.join(show_dir, thre_str, scene_name, 'occ_gts')
                     occ_pred_save_dir = os.path.join(show_dir, thre_str, scene_name, 'occ_preds')
@@ -430,7 +427,6 @@ class CustomNuScenesDataset(NuScenesDataset):
         occ_pred_valid_index = np.where(valid_mask)[0]
         occ_pred_valid_label = occ_pred_full[valid_mask]
         occ_pred_valid = np.stack([occ_pred_valid_index, occ_pred_valid_label], axis=-1)
-        # print(occ_pred_valid.shape)
         return occ_pred_valid
     
     def obtain_flow_pred_valid(self, occ_pred_sparse, flow_pred_sparse, invalid_occupancy):
