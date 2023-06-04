@@ -42,6 +42,7 @@ https://github.com/OpenDriveLab/OccNet/assets/54334254/13b3de83-f1a4-42e4-93c2-f
 ## Getting Started
 - [Install](docs/install.md)
 - [Prepare dataset](docs/prepare_dataset.md)
+- [Visualization](docs/visualization.md)
 - [Run the code](docs/run.md)
 
 ### Results and Pre-trained Models
