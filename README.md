@@ -1,9 +1,9 @@
 <div align="center">   
 
 <!-- omit in toc -->
-# OccNet: a Cutting-edge Baseline for Camera-based 3D Occupancy Prediction
+# Scene as Occupancy
 </div>
-
+OccNet: a Cutting-edge Baseline for Camera-based 3D Occupancy Prediction
 
 https://github.com/OpenDriveLab/OccNet/assets/54334254/510e24d0-bcc9-41b5-9eca-1efccf0e4931
 
