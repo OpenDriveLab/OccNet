@@ -29,5 +29,5 @@ def merge(root_dir, occ_gt_dir):
 
 if __name__ == '__main__':
     root_dir = 'data/nuscenes'
-    occ_git_dir = 'data/occ_gt_release_v0_1'
+    occ_git_dir = 'data/occ_gt_release_v1_0'
     merge(root_dir, occ_git_dir)
