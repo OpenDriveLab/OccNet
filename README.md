@@ -5,7 +5,8 @@
 </div>
 OccNet: a Cutting-edge Baseline for Camera-based 3D Occupancy Prediction
 
-https://github.com/OpenDriveLab/OccNet/assets/54334254/510e24d0-bcc9-41b5-9eca-1efccf0e4931
+https://github.com/OpenDriveLab/OccNet/assets/54334254/13b3de83-f1a4-42e4-93c2-ff3550b43ed2
+
 
 
 ![teaser](assets/figs/pipeline.PNG)
