@@ -115,46 +115,26 @@ model = dict(
             use_can_bus=True,
             embed_dims=_dim_,
             decoder_on_bev=decoder_on_bev,
-            encoder_embed_dims=[_dim_, voxel_encoder1_dim, voxel_encoder2_dim, voxel_encoder3_dim, voxel_encoder4_dim],  # TODO 5 block
-            feature_map_z=[1, bev_z1, bev_z2, bev_z3, bev_z4],  # TODO  4 block
+            encoder_embed_dims=[_dim_, voxel_encoder1_dim, voxel_encoder2_dim, voxel_encoder3_dim, voxel_encoder4_dim],  # the dim of cascaded voxel encoder
+            feature_map_z=[1, bev_z1, bev_z2, bev_z3, bev_z4],  # the height of cascaded voxel encoder
+            pos_dims=[_pos_dim_, _pos_dim_1, _pos_dim_2, _pos_dim_3, _pos_dim_4],
             position=dict(
-                bev1=dict(
+                bev=dict(
                     type='LearnedPositionalEncoding',
                     num_feats=_pos_dim_,
                     row_num_embed=bev_h_,
                     col_num_embed=bev_w_,
                     ),
-                voxel1=dict(
+                voxel=dict(
                     type='VoxelLearnedPositionalEncoding',
                     num_feats=_pos_dim_1,
                     row_num_embed=bev_h_,
                     col_num_embed=bev_w_,
                     z_num_embed=bev_z1,
-                    ),
-                voxel2=dict(
-                    type='VoxelLearnedPositionalEncoding',
-                    num_feats=_pos_dim_2,
-                    row_num_embed=bev_h_,
-                    col_num_embed=bev_w_,
-                    z_num_embed=bev_z2,
-                    ),
-                voxel3=dict(
-                    type='VoxelLearnedPositionalEncoding',
-                    num_feats=_pos_dim_3,
-                    row_num_embed=bev_h_,
-                    col_num_embed=bev_w_,
-                    z_num_embed=bev_z3,
-                    ),
-                voxel4=dict(
-                    type='VoxelLearnedPositionalEncoding',
-                    num_feats=_pos_dim_4,
-                    row_num_embed=bev_h_,
-                    col_num_embed=bev_w_,
-                    z_num_embed=bev_z4,
-                    ),
+                    )
                 ), 
             encoder=dict(
-                bev1=dict(
+                bev=dict(  # the bev encoder
                     type='BEVFormerEncoder',
                     num_layers=1,
                     pc_range=point_cloud_range,
@@ -166,7 +146,7 @@ model = dict(
                             dict(
                                 type='TemporalSelfAttention',
                                 embed_dims=_dim_,
-                                num_points=4,  # default is 4
+                                num_points=4,  
                                 num_levels=1),
                             dict(
                                 type='SpatialCrossAttention',
@@ -186,16 +166,16 @@ model = dict(
                         num_fcs=2,
                         ffn_drop=0.1,
                         act_cfg=dict(type='ReLU', inplace=True),
-                        ),  # add ffn_cfgs when _dim_ != 256
+                        ),
                         feedforward_channels=_ffn_dim_,
                         ffn_dropout=0.1,
                         operation_order=('self_attn', 'norm', 'cross_attn', 'norm',
                                         'ffn', 'norm'))),
-                voxel1=dict(
+                voxel=dict(  # the config of first cascaded voxel encoder
                     type='VoxelFormerEncoder',
                     num_layers=1,
                     pc_range=point_cloud_range,
-                    num_points_in_voxel=4,   # TODO 
+                    num_points_in_voxel=4,   
                     return_intermediate=False,
                     transformerlayers=dict(
                         type='VoxelFormerLayer',
@@ -203,7 +183,7 @@ model = dict(
                             dict(
                                 type='VoxelTemporalSelfAttention',
                                 embed_dims=voxel_encoder1_dim,
-                                num_points=4,  # default is 4
+                                num_points=4,  
                                 num_levels=1),
                             dict(
                                 type='SpatialCrossAttention',
@@ -217,157 +197,19 @@ model = dict(
                             )
                         ],
                         ffn_cfgs=dict(
-                        type='FFN',
-                        embed_dims=voxel_encoder1_dim,
+                            type='FFN',
+                            embed_dims=voxel_encoder1_dim,
+                            feedforward_channels=voxel_encoder1_dim*2,
+                            num_fcs=2,
+                            ffn_drop=0.1,
+                            act_cfg=dict(type='ReLU', inplace=True),
+                            ),  
                         feedforward_channels=voxel_encoder1_dim*2,
-                        num_fcs=2,
-                        ffn_drop=0.1,
-                        act_cfg=dict(type='ReLU', inplace=True),
-                        ),  # add ffn_cfgs when _dim_ != 256
-                        feedforward_channels=voxel_encoder1_dim*2,
                         ffn_dropout=0.1,
                         operation_order=('self_attn', 'norm', 'cross_attn', 'norm',
                                         'ffn', 'norm'))),
-                voxel2=dict(
-                    type='VoxelFormerEncoder',
-                    num_layers=1,
-                    pc_range=point_cloud_range,
-                    num_points_in_voxel=4,   # TODO 
-                    return_intermediate=False,
-                    transformerlayers=dict(
-                        type='VoxelFormerLayer',
-                        attn_cfgs=[
-                            dict(
-                                type='VoxelTemporalSelfAttention',
-                                embed_dims=voxel_encoder2_dim,
-                                num_points=4,  # default is 4
-                                num_levels=1),
-                            dict(
-                                type='SpatialCrossAttention',
-                                pc_range=point_cloud_range,
-                                deformable_attention=dict(
-                                    type='MSDeformableAttention3D',
-                                    embed_dims=voxel_encoder2_dim,
-                                    num_points=8,
-                                    num_levels=_num_levels_),
-                                embed_dims=voxel_encoder2_dim,
-                            )
-                        ],
-                        ffn_cfgs=dict(
-                        type='FFN',
-                        embed_dims=voxel_encoder2_dim,
-                        feedforward_channels=voxel_encoder2_dim*2,
-                        num_fcs=2,
-                        ffn_drop=0.1,
-                        act_cfg=dict(type='ReLU', inplace=True),
-                        ),  # add ffn_cfgs when _dim_ != 256
-                        feedforward_channels=voxel_encoder2_dim*2,
-                        ffn_dropout=0.1,
-                        operation_order=('self_attn', 'norm', 'cross_attn', 'norm',
-                                        'ffn', 'norm'))),
-                voxel3=dict(
-                    type='VoxelFormerEncoder',
-                    num_layers=1,
-                    pc_range=point_cloud_range,
-                    num_points_in_voxel=4,   # TODO 
-                    return_intermediate=False,
-                    transformerlayers=dict(
-                        type='VoxelFormerLayer',
-                        attn_cfgs=[
-                            dict(
-                                type='VoxelTemporalSelfAttention',
-                                embed_dims=voxel_encoder3_dim,
-                                num_points=4,  # default is 4
-                                num_levels=1),
-                            dict(
-                                type='SpatialCrossAttention',
-                                pc_range=point_cloud_range,
-                                deformable_attention=dict(
-                                    type='MSDeformableAttention3D',
-                                    embed_dims=voxel_encoder3_dim,
-                                    num_points=8,
-                                    num_levels=_num_levels_),
-                                embed_dims=voxel_encoder3_dim,
-                            )
-                        ],
-                        ffn_cfgs=dict(
-                        type='FFN',
-                        embed_dims=voxel_encoder3_dim,
-                        feedforward_channels=voxel_encoder3_dim*2,
-                        num_fcs=2,
-                        ffn_drop=0.1,
-                        act_cfg=dict(type='ReLU', inplace=True),
-                        ),  # add ffn_cfgs when _dim_ != 256
-                        feedforward_channels=voxel_encoder3_dim*2,
-                        ffn_dropout=0.1,
-                        operation_order=('self_attn', 'norm', 'cross_attn', 'norm',
-                                        'ffn', 'norm'))),
-                voxel4=dict(
-                    type='VoxelFormerEncoder',
-                    num_layers=1,
-                    pc_range=point_cloud_range,
-                    num_points_in_voxel=4,   # TODO 
-                    return_intermediate=False,
-                    transformerlayers=dict(
-                        type='VoxelFormerLayer',
-                        attn_cfgs=[
-                            dict(
-                                type='VoxelTemporalSelfAttention',
-                                embed_dims=voxel_encoder4_dim,
-                                num_points=4,  # default is 4
-                                num_levels=1),
-                            dict(
-                                type='SpatialCrossAttention',
-                                pc_range=point_cloud_range,
-                                deformable_attention=dict(
-                                    type='MSDeformableAttention3D',
-                                    embed_dims=voxel_encoder4_dim,
-                                    num_points=8,
-                                    num_levels=_num_levels_),
-                                embed_dims=voxel_encoder4_dim,
-                            )
-                        ],
-                        ffn_cfgs=dict(
-                        type='FFN',
-                        embed_dims=voxel_encoder4_dim,
-                        feedforward_channels=voxel_encoder4_dim*2,
-                        num_fcs=2,
-                        ffn_drop=0.1,
-                        act_cfg=dict(type='ReLU', inplace=True),
-                        ),  # add ffn_cfgs when _dim_ != 256
-                        feedforward_channels=voxel_encoder4_dim*2,
-                        ffn_dropout=0.1,
-                        operation_order=('self_attn', 'norm', 'cross_attn', 'norm',
-                                        'ffn', 'norm')))),
-            decoder=dict(
-                type='DetectionTransformerDecoder',
-                num_layers=6,
-                return_intermediate=True,
-                transformerlayers=dict(
-                    type='DetrTransformerDecoderLayer',
-                    attn_cfgs=[
-                        dict(
-                            type='MultiheadAttention',
-                            embed_dims=_dim_,
-                            num_heads=8,
-                            dropout=0.1),
-                         dict(
-                            type='CustomMSDeformableAttention',
-                            embed_dims=_dim_,
-                            num_levels=1),
-                    ],
-                    ffn_cfgs=dict(
-                     type='FFN',
-                     embed_dims=_dim_,
-                     feedforward_channels=_ffn_dim_,
-                     num_fcs=2,
-                     ffn_drop=0.1,
-                     act_cfg=dict(type='ReLU', inplace=True),
-                    ),  # add ffn_cfgs when _dim_ != 256
-                    feedforward_channels=_ffn_dim_,
-                    ffn_dropout=0.1,
-                    operation_order=('self_attn', 'norm', 'cross_attn', 'norm',
-                                     'ffn', 'norm')))),
+               ),
+            ),
         bbox_coder=dict(
             type='NMSFreeCoder',
             post_center_range=[-61.2, -61.2, -10.0, 61.2, 61.2, 10.0],

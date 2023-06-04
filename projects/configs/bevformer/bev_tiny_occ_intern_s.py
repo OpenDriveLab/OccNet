@@ -41,7 +41,7 @@ bev_h_ = 200
 bev_w_ = 200
 queue_length = 3 # each sequence contains `queue_length` frames.
 
-pretrained = '/mnt/lustrenew/share_data/tongwenwen1/models/internimage/detection/mask_rcnn_internimage_s_fpn_3x_coco.pth'
+pretrained = 'ckpts/mask_rcnn_internimage_s_fpn_3x_coco.pth'
 model = dict(
     type='BEVFormer',
     use_grid_mask=True,
@@ -208,7 +208,7 @@ data = dict(
         use_occ_gts=True, 
         load_occ_lidarseg=True,
         data_root=data_root,
-        ann_file='data/nuscenes_occupancy_gt_normal/nuscenes_infos_temporal_train_occ_gt.pkl',
+        ann_file='data/occ_gt_release_v1_0/nuscenes_infos_temporal_train_occ_gt.pkl',
         pipeline=train_pipeline,
         classes=class_names,
         modality=input_modality,
@@ -220,13 +220,13 @@ data = dict(
     val=dict(type=dataset_type,
              load_occ_lidarseg=True,
              data_root=data_root,
-             ann_file='data/nuscenes_occupancy_gt_normal/nuscenes_infos_temporal_val_occ_gt.pkl',
+             ann_file='data/occ_gt_release_v1_0/nuscenes_infos_temporal_val_occ_gt.pkl',
              pipeline=test_pipeline,  bev_size=(bev_h_, bev_w_),
              classes=class_names, modality=input_modality, samples_per_gpu=1),
     test=dict(type=dataset_type,
               load_occ_lidarseg=True,
               data_root=data_root,
-              ann_file='data/nuscenes_occupancy_gt_normal/nuscenes_infos_temporal_val_occ_gt.pkl',
+              ann_file='data/occ_gt_release_v1_0/nuscenes_infos_temporal_val_occ_gt.pkl',
               pipeline=test_pipeline, bev_size=(bev_h_, bev_w_),
               classes=class_names, modality=input_modality),
     shuffler_sampler=dict(type='DistributedGroupSampler'),
