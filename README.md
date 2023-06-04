@@ -34,12 +34,14 @@ https://github.com/OpenDriveLab/OccNet/assets/54334254/510e24d0-bcc9-41b5-9eca-1
 
 ## News
 - [2023/06/04] Code & model initial release `v1.0`
+- [2023/06/04] 3D Occupancy and flow dataset release `v1.0`
 - [2023/06/01] [CVPR AD Challenge 3D Occupancy Track](https://opendrivelab.com/AD23Challenge.html#Track3) close
 - [2023/03/01] [CVPR AD Challenge 3D Occupancy Track](https://opendrivelab.com/AD23Challenge.html#Track3) launch
 
 ## Getting Started
 - [Install](docs/install.md)
 - [Prepare dataset](docs/prepare_dataset.md)
+- [Run the code](docs/run.md)
 
 ### Results and Pre-trained Models
 We will release pre-trained weight soon.
@@ -48,6 +50,7 @@ We will release pre-trained weight soon.
 
 
 ## TODO List
+- [x] 3D Occupancy and flow dataset `v1_0`
 - [x] 3D Occupancy Prediction code
 - [ ] Pre-trained Models
 - [ ] Occupancy label generation code

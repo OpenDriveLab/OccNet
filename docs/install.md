@@ -6,6 +6,7 @@ conda activate occ
 ```
 
 **1. Install PyTorch and torchvision following the [official instructions](https://pytorch.org/).**
+Pytorch and cuda with higher version is also supported.
 ```shell
 conda install pytorch==1.10.0 torchvision==0.11.0 torchaudio==0.10.0 cudatoolkit=10.2 -c pytorch
 ```
@@ -41,25 +42,25 @@ pip install timm
 git clone https://github.com/OpenDriveLab/OccNet.git
 ```
 
-**7. Install [InternImage](https://github.com/OpenGVLab/InternImage) (Optional).**
+**7. Prepare pretrained model**
+```shell
+cd OccNet
+mkdir ckpts
+cd ckpts 
+wget https://github.com/zhiqi-li/storage/releases/download/v1.0/r101_dcn_fcos3d_pretrain.pth
+```
 
-OccNet support InternImage backbone with much better performance than ImageNet backbone
+**8. Install [InternImage](https://github.com/OpenGVLab/InternImage) (Optional).**
+
+OccNet support InternImage backbone with much better performance than ImageNet backbone.
+- Install dcnv3
 ```
 cd OccNet
 cd projects/mmdet3d_plugin/bevformer/backbones/ops_dcnv3
 sh make.sh
 python test.py
 ```
-
-**Prepare pretrained models**
-- FCOS3D Resnet101 Backbone
-```shell
-cd OccNet
-mkdir ckpts
-cd ckpts 
-download https://github.com/zhiqi-li/storage/releases/download/v1.0/r101_dcn_fcos3d_pretrain.pth
-```
-- InternImage Backbone
+- Prepare pretrained model
 ```
 cd OccNet/ckpts
 download https://huggingface.co/OpenGVLab/InternImage/resolve/main/mask_rcnn_internimage_s_fpn_3x_coco.pth

@@ -20,7 +20,10 @@ Using the above code will generate the following files
 `
 data/nuscenes/nuscenes_infos_temporal_{train,val}.pkl
 `
+
 **3. Prepare 3D Occupancy dataset**
+We provide the 3D occupancy and flow annotations for the train and validation dataset.
+The annotations is defined in the LiDAR cooridinate system including 16 classes. 
 > Dataset Information
 <div align="left">
   
@@ -35,14 +38,57 @@ data/nuscenes/nuscenes_infos_temporal_{train,val}.pkl
 | #classes        | 0 - 15 |
 </div>
 
-> Dowload link of train and validation dataset
+
+1.Dowload train and validataion dataset and put it in the `data` folder
 
 | Version | Google Drive <img src="https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png" alt="Google Drive" width="18"/> | Baidu Cloud <img src="https://nd-static.bdstatic.com/m-static/v20-main/favicon-main.ico" alt="Baidu Yun" width="18"/> | Size |
 | :---: | :---: | :---: | :---: |
-| trainval  | TBD | TBD | - |
+| occ_gt_release_v1_0  | TBD | TBD | - |
 
+2. unzip the file
+```
+tar -zxvf occ_gt_release_v1_0.tar.gz
+```
+You will obtain the folder structure
+```
+OccNet
+├── data/
+│   ├── occ_gt_release_v1_0/
+│   │   ├── train/
+│   │   ├── val/
+│   │   ├── occ_gt_train.json
+│   │   ├── occ_gt_val.json
+```
 
-> Merge 3D detection and 3D occupancy dataset
+3. Merge 3D detection and 3D occupancy dataset
 ```
 python tools/create_data_with_occ.py
+```
+Using the above code will generate the following files
+`
+data/occ_gt_release_v1_0/nuscenes_infos_temporal_{train,val}_occ_gt.pkl
+`
+We also provide the downlink of [nuscenes_infos_temporal_train_occ_gt.pkl]() and 
+[nuscenes_infos_temporal_val_occ_gt.pkl]()
+
+4. The data structure of the project is organized as:
+```
+OccNet
+├── data/
+│   ├── can_bus/
+│   ├── nuscenes/
+│   │   ├── maps/
+│   │   ├── samples/
+│   │   ├── sweeps/
+│   │   ├── v1.0-test
+│   │   ├── v1.0-trainval
+│   │   ├── nuscenes_infos_temporal_train.pkl
+│   │   ├── nuscenes_infos_temporal_val.pkl   
+│   ├── occ_gt_release_v1_0/
+│   │   ├── train/
+│   │   ├── val/
+│   │   ├── occ_gt_train.json
+│   │   ├── occ_gt_val.json
+│   │   ├── nuscenes_infos_temporal_train_occ_gt.pkl
+│   │   ├── nuscenes_infos_temporal_val_occ_gt.pkl
 ```
