@@ -4,7 +4,7 @@
 # Scene as Occupancy
 </div>
 
-We believe **Occupancy** is a `general` representation of the scene and help perception and planning in autonomous driving. 
+We believe **Occupancy** is a `general` representation of the scene and help perception and planning in the full-stack of autonomous driving. 
 
 https://github.com/OpenDriveLab/OccNet/assets/54334254/92fb43a0-0ee8-4eab-aa53-0984506f0ec3
 
