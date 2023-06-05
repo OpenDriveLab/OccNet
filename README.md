@@ -52,7 +52,7 @@ We will release pre-trained weight soon.
 
 
 ## TODO List
-- [x] 3D Occupancy and flow dataset `v1_0`
+- [x] 3D Occupancy and flow dataset `v1.0`
 - [x] 3D Occupancy Prediction code
 - [ ] Pre-trained Models
 - [ ] Occupancy label generation code
