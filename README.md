@@ -3,19 +3,21 @@
 <!-- omit in toc -->
 # Scene as Occupancy
 </div>
-OccNet: a Cutting-edge Baseline for Camera-based 3D Occupancy Prediction
+
+We believe **Occupancy** is a (sort of new and) `general` representation for perception in autonomous driving. 
 
 https://github.com/OpenDriveLab/OccNet/assets/54334254/13b3de83-f1a4-42e4-93c2-ff3550b43ed2
 
 
+OccNet pipeline is shown below.
 
 ![teaser](assets/figs/pipeline.PNG)
 
 
 > **Scene as Occupancy**
-> - [Paper in arXiv]() | [OpenDriveLab](https://opendrivelab.com) 
+> - [Paper in arXiv]() 
 > - [CVPR 2023 AD Challenge Occupancy Track](https://opendrivelab.com/AD23Challenge.html#Track3) | [Challenge GitHub Repo](https://github.com/CVPR2023-3D-Occupancy-Prediction/CVPR2023-3D-Occupancy-Prediction)
-> - Contact: [simachonghao@pjlab.org.cn](mailto:simachonghao@pjlab.org.cn) or [tongww95@gmail.com](mailto:tongww95@gmail.com). Any questions or discussions are welcomed! 
+> - Point of contact: [simachonghao@pjlab.org.cn](mailto:simachonghao@pjlab.org.cn) or [tongww95@gmail.com](mailto:tongww95@gmail.com). Any inquiries are welcome! 
 
 
 <!-- omit in toc -->
@@ -72,4 +74,3 @@ We host the first 3D occupancy prediciton challenge on CVPR 2023 End-to-end Auto
 [![Awesome](https://awesome.re/badge.svg)](https://awesome.re)
 - [BEVFormer](https://github.com/fundamentalvision/BEVFormer)
 - [BEV Perception Survey & Recipe](https://github.com/OpenDriveLab/BEVPerception-Survey-Recipe)
-- [mmdet3d](https://github.com/open-mmlab/mmdetection3d)
