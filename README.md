@@ -9,11 +9,6 @@ We believe **Occupancy** is a (sort of new and) `general` representation for per
 https://github.com/OpenDriveLab/OccNet/assets/54334254/13b3de83-f1a4-42e4-93c2-ff3550b43ed2
 
 
-OccNet pipeline is shown below.
-
-![teaser](assets/figs/pipeline.PNG)
-
-
 > **Scene as Occupancy**
 > - [Paper in arXiv]() 
 > - [CVPR 2023 AD Challenge Occupancy Track](https://opendrivelab.com/AD23Challenge.html#Track3) | [Challenge GitHub Repo](https://github.com/CVPR2023-3D-Occupancy-Prediction/CVPR2023-3D-Occupancy-Prediction)
@@ -36,6 +31,8 @@ We provide a full-scale 3D occupancy leaderboard based on our CVPR 2023 AD chall
 - [Related resources](#related-resources)
 
 ## Highlights
+
+![teaser](assets/figs/pipeline.PNG)
 - :oncoming_automobile: **General Representation in Perception**: 3D Occupancy is a geometry-aware representation of the scene. Compared to the form of 3D bounding box & BEV segmentation,  3D occupancy could capture the fine-grained details of critical obstacles in the scene.
 - :trophy: **Exploration in full-stack Autonomous Driving**: OccNet, as a strong descriptor of the scene, could facilitate subsequent tasks such as perception and planning, achieving results on par with LiDAR-based methods (41.08 on mIOU in 3D occupancy, 60.46 on mIOU in LiDAR segmentation, 0.703 avg.Col in motion planning).
 
