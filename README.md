@@ -19,6 +19,10 @@ OccNet pipeline is shown below.
 > - [CVPR 2023 AD Challenge Occupancy Track](https://opendrivelab.com/AD23Challenge.html#Track3) | [Challenge GitHub Repo](https://github.com/CVPR2023-3D-Occupancy-Prediction/CVPR2023-3D-Occupancy-Prediction)
 > - Point of contact: [simachonghao@pjlab.org.cn](mailto:simachonghao@pjlab.org.cn) or [tongww95@gmail.com](mailto:tongww95@gmail.com). Any inquiries are welcome! 
 
+<!-- omit in toc -->
+## 3D Occupancy Leaderboard
+We provide a full-scale 3D occupancy leaderboard based on our CVPR 2023 AD challenge, including their technical report. The link is to be launched! Stay tuned!
+
 
 <!-- omit in toc -->
 ## Table of Contents
