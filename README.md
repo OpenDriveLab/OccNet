@@ -12,7 +12,7 @@ https://github.com/OpenDriveLab/OccNet/assets/54334254/92fb43a0-0ee8-4eab-aa53-0
 
 > **Scene as Occupancy**
 > - [Paper in arXiv (to be released soon)]() | [CVPR 2023 AD Challenge Occupancy Track](https://opendrivelab.com/AD23Challenge.html#Track3)
-> - Point of contact: [simachonghao@pjlab.org.cn](mailto:simachonghao@pjlab.org.cn) or [tongww95@gmail.com](mailto:tongww95@gmail.com). Any inquiries are welcome! 
+> - Point of contact: [simachonghao@pjlab.org.cn](mailto:simachonghao@pjlab.org.cn) or [tongwenwen1@sensetime.com](mailto:tongwenwen1@sensetime.com). Any inquiries are welcome! 
 
 <!-- omit in toc -->
 ## 3D Occupancy Leaderboard

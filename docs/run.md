@@ -12,8 +12,8 @@ OccNet: projects/configs/hybrid
 
 Train model with 8 GPUs 
 ```
-./tools/dist_train.sh ./projects/configs/bevformer/bev_tiny_occ.py 8  #  bevnet: occpancy
-./tools/dist_train.sh ./projects/configs/bevformer/bev_tiny_det_occ.py 8  # bevnet: occpancy+detection
+./tools/dist_train.sh ./projects/configs/bevformer/bev_tiny_occ.py 8  #  bevnet: occupancy
+./tools/dist_train.sh ./projects/configs/bevformer/bev_tiny_det_occ.py 8  # bevnet: occupancy+detection
 ./tools/dist_train.sh ./projects/configs/hybrid/hybrid_tiny_occ.py 8  # occnet: occupancy
 ```
 
