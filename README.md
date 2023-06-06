@@ -37,6 +37,7 @@ We provide a full-scale 3D occupancy leaderboard based on our CVPR 2023 AD chall
 - :trophy: **Exploration in full-stack Autonomous Driving**: OccNet, as a strong descriptor of the scene, could facilitate subsequent tasks such as perception and planning, achieving results on par with LiDAR-based methods (41.08 on mIOU in 3D occupancy, 60.46 on mIOU in LiDAR segmentation, 0.703 avg.Col in motion planning).
 
 ## News
+- [2023/06/06] [Paper](https://arxiv.org/abs/2306.02851) released on arxiv
 - [2023/06/04] Code & model initial release `v1.0`
 - [2023/06/04] 3D Occupancy and flow dataset release `v1.0`
 - [2023/06/01] [CVPR AD Challenge 3D Occupancy Track](https://opendrivelab.com/AD23Challenge.html#Track3) close
