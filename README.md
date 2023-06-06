@@ -11,7 +11,7 @@ https://github.com/OpenDriveLab/OccNet/assets/54334254/92fb43a0-0ee8-4eab-aa53-0
 
 
 > **Scene as Occupancy**
-> - [Paper in arXiv (to be released soon)]() | [CVPR 2023 AD Challenge Occupancy Track](https://opendrivelab.com/AD23Challenge.html#Track3)
+> - [Paper in arXiv](https://arxiv.org/abs/2306.02851) | [CVPR 2023 AD Challenge Occupancy Track](https://opendrivelab.com/AD23Challenge.html#Track3)
 > - Point of contact: [simachonghao@pjlab.org.cn](mailto:simachonghao@pjlab.org.cn) or [tongwenwen1@sensetime.com](mailto:tongwenwen1@sensetime.com). Any inquiries are welcome! 
 
 <!-- omit in toc -->
@@ -66,6 +66,14 @@ All assets (including figures and data) and code are under the [Apache 2.0 licen
 
 Please consider citing our paper if the project helps your research with the following BibTex:
 ```bibtex
+@article{tong2023scene,
+      title={Scene as Occupancy}, 
+      author={Wenwen Tong and Chonghao Sima and Tai Wang and Silei Wu and Hanming Deng and Li Chen and Yi Gu and Lewei Lu and Ping Luo and Dahua Lin and Hongyang Li},
+      year={2023},
+      eprint={2306.02851},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV}
+}
 ```
 
 ## Challenge
