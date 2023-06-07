@@ -60,6 +60,7 @@ We will release pre-trained weight soon.
 - [x] 3D Occupancy Prediction code
 - [ ] Pre-trained Models
 - [ ] Occupancy label generation code
+- [ ] GT label with more voxel size
 - [ ] Compatibility with other BEV encoders
 
 ## License & Citation
