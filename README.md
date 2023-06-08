@@ -16,7 +16,9 @@ https://github.com/OpenDriveLab/OccNet/assets/54334254/92fb43a0-0ee8-4eab-aa53-0
 
 <!-- omit in toc -->
 ## 3D Occupancy Leaderboard
-We provide a full-scale [3D occupancy leaderboard](https://opendrivelab.com/AD23Challenge.html#Track3) based on our CVPR 2023 AD challenge. Check it out!
+We provide a full-scale [3D occupancy leaderboard](https://opendrivelab.com/AD23Challenge.html#Track3) based on our CVPR 2023 AD challenge. Top 6 at a glance here. Check the website out!
+
+![teaser](assets/figs/top_6.png)
 
 
 <!-- omit in toc -->
