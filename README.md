@@ -59,7 +59,7 @@ We will release pre-trained weight soon.
 
 ## TODO List
 - [x] 3D Occupancy and flow dataset `v1.0`
-- [x] 3D Occupancy Prediction code
+- [x] 3D Occupancy Prediction code `v1.0`
 - [ ] Pre-trained Models
 - [ ] Occupancy label generation code
 - [ ] GT label with more voxel size
