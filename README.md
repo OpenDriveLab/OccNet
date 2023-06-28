@@ -70,7 +70,7 @@ All assets (including figures and data) and code are under the [Apache 2.0 licen
 
 Please consider citing our paper if the project helps your research with the following BibTex:
 ```bibtex
-@article{tong2023scene,
+@article{sima2023_occnet,
       title={Scene as Occupancy}, 
       author={Chonghao Sima and Wenwen Tong and Tai Wang and Li Chen and Silei Wu and Hanming Deng  and Yi Gu and Lewei Lu and Ping Luo and Dahua Lin and Hongyang Li},
       year={2023},
