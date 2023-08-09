@@ -66,7 +66,7 @@ We will release pre-trained weight soon.
 - [ ] Compatibility with other BEV encoders
 
 ## License & Citation
-All assets (including figures and data) and code are under the [Apache 2.0 license](./LICENSE) unless specified otherwise.
+All assets (including figures) and code are under the [Apache 2.0 license](./LICENSE) unless specified otherwise. The data license inherits the license used in nuScenes dataset.
 
 Please consider citing our paper if the project helps your research with the following BibTex:
 ```bibtex
