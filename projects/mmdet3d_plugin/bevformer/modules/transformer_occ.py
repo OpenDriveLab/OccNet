@@ -145,15 +145,7 @@ class TransformerOcc(BaseModule):
         self.cams_embeds = nn.Parameter(
             torch.Tensor(self.num_cams, self.embed_dims))
         # self.reference_points = nn.Linear(self.embed_dims, 3)
-        self.can_bus_mlp = nn.Sequential(
-            nn.Linear(18, self.embed_dims // 2),
-            nn.ReLU(inplace=True),
-            nn.Linear(self.embed_dims // 2, self.embed_dims),
-            nn.ReLU(inplace=True),
-        )
-        if self.can_bus_norm:
-            self.can_bus_mlp.add_module('norm', nn.LayerNorm(self.embed_dims))
-
+        
     def init_weights(self):
         """Initialize the transformer weights."""
         for p in self.parameters():
@@ -169,7 +161,6 @@ class TransformerOcc(BaseModule):
         normal_(self.level_embeds)
         normal_(self.cams_embeds)
         # xavier_init(self.reference_points, distribution='uniform', bias=0.)
-        xavier_init(self.can_bus_mlp, distribution='uniform', bias=0.)
 
     @auto_fp16(apply_to=('mlvl_feats', 'bev_queries', 'prev_bev', 'bev_pos'))
     def get_bev_features(
@@ -190,28 +181,6 @@ class TransformerOcc(BaseModule):
         bev_queries = bev_queries.unsqueeze(1).repeat(1, bs, 1)
         bev_pos = bev_pos.flatten(2).permute(2, 0, 1)
 
-        # obtain rotation angle and shift with ego motion
-
-        delta_x = np.array([each['can_bus'][0]
-                           for each in kwargs['img_metas']])
-        delta_y = np.array([each['can_bus'][1]
-                           for each in kwargs['img_metas']])
-        ego_angle = np.array(
-            [each['can_bus'][-2] / np.pi * 180 for each in kwargs['img_metas']])
-        grid_length_y = grid_length[0]
-        grid_length_x = grid_length[1]
-        translation_length = np.sqrt(delta_x ** 2 + delta_y ** 2)
-        translation_angle = np.arctan2(delta_y, delta_x) / np.pi * 180
-        bev_angle = ego_angle - translation_angle
-        shift_y = translation_length * \
-            np.cos(bev_angle / 180 * np.pi) / grid_length_y / bev_h
-        shift_x = translation_length * \
-            np.sin(bev_angle / 180 * np.pi) / grid_length_x / bev_w
-        shift_y = shift_y * self.use_shift
-        shift_x = shift_x * self.use_shift
-        shift = bev_queries.new_tensor(
-            [shift_x, shift_y]).permute(1, 0)  # xy, bs -> bs, xy
-
         if prev_bev is not None:
             if prev_bev.shape[1] == bev_h * bev_w:
                 prev_bev = prev_bev.permute(1, 0, 2)
@@ -229,12 +198,6 @@ class TransformerOcc(BaseModule):
                     tmp_prev_bev = tmp_prev_bev.permute(1, 2, 0).reshape(
                         bev_h * bev_w, 1, -1)
                     prev_bev[:, i] = tmp_prev_bev[:, 0]
-
-        # add can bus signals
-        can_bus = bev_queries.new_tensor(
-            [each['can_bus'] for each in kwargs['img_metas']])  # [:, :]
-        can_bus = self.can_bus_mlp(can_bus)[None, :, :]
-        bev_queries = bev_queries + can_bus * self.use_can_bus
 
         feat_flatten = []
         spatial_shapes = []
@@ -268,7 +231,6 @@ class TransformerOcc(BaseModule):
             spatial_shapes=spatial_shapes,
             level_start_index=level_start_index,
             prev_bev=prev_bev,
-            shift=shift,
             **kwargs
         )
 

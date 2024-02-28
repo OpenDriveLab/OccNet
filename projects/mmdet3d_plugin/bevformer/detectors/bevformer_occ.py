@@ -217,21 +217,11 @@ class BEVFormerOcc(MVXTwoStageDetector):
             dict: Losses of different branches.
         """
 
-        len_queue = img.size(1)
-        prev_img = img[:, :-1, ...]
-        img = img[:, -1, ...]
-
-        prev_img_metas = copy.deepcopy(img_metas)
-        prev_bev = self.obtain_history_bev(prev_img, prev_img_metas)
-
-        img_metas = [each[len_queue - 1] for each in img_metas]
-        if not img_metas[0]['prev_bev_exists']:
-            prev_bev = None
         img_feats = self.extract_feat(img=img, img_metas=img_metas)
         losses = dict()
         losses_pts = self.forward_pts_train(img_feats, gt_bboxes_3d,
                                             gt_labels_3d, voxel_semantics, mask_camera, img_metas,
-                                            gt_bboxes_ignore, prev_bev)
+                                            gt_bboxes_ignore, prev_bev=None)
 
         losses.update(losses_pts)
         return losses
@@ -247,34 +237,11 @@ class BEVFormerOcc(MVXTwoStageDetector):
                 raise TypeError('{} must be a list, but got {}'.format(
                     name, type(var)))
         img = [img] if img is None else img
-
-        if img_metas[0][0]['scene_token'] != self.prev_frame_info['scene_token']:
-            # the first sample of each scene is truncated
-            self.prev_frame_info['prev_bev'] = None
-        # update idx
-        self.prev_frame_info['scene_token'] = img_metas[0][0]['scene_token']
-
-        # do not use temporal information
-        if not self.video_test_mode:
-            self.prev_frame_info['prev_bev'] = None
-
-        # Get the delta of ego position and angle between two timestamps.
-        tmp_pos = copy.deepcopy(img_metas[0][0]['can_bus'][:3])
-        tmp_angle = copy.deepcopy(img_metas[0][0]['can_bus'][-1])
-        if self.prev_frame_info['prev_bev'] is not None:
-            img_metas[0][0]['can_bus'][:3] -= self.prev_frame_info['prev_pos']
-            img_metas[0][0]['can_bus'][-1] -= self.prev_frame_info['prev_angle']
-        else:
-            img_metas[0][0]['can_bus'][-1] = 0
-            img_metas[0][0]['can_bus'][:3] = 0
-
+        
         new_prev_bev, occ_results = self.simple_test(
-            img_metas[0], img[0], prev_bev=self.prev_frame_info['prev_bev'], **kwargs)
+            img_metas[0], img[0], prev_bev=None, **kwargs)
         # During inference, we save the BEV features and ego motion of each timestamp.
 
-        self.prev_frame_info['prev_pos'] = tmp_pos
-        self.prev_frame_info['prev_angle'] = tmp_angle
-        self.prev_frame_info['prev_bev'] = new_prev_bev
         return occ_results
 
     def simple_test_pts(self, x, img_metas, prev_bev=None, rescale=False):

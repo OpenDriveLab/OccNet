@@ -168,7 +168,6 @@ class BEVFormerOccHead(BaseModule):
 
         loss_dict=dict()
         occ=preds_dicts['occ']
-        assert voxel_semantics.min()>=0 and voxel_semantics.max()<=17
         losses = self.loss_single(voxel_semantics,mask_camera,occ)
         loss_dict['loss_occ']=losses
         return loss_dict
@@ -202,6 +201,5 @@ class BEVFormerOccHead(BaseModule):
         occ_out=preds_dicts['occ']
         occ_score=occ_out.softmax(-1)
         occ_score=occ_score.argmax(-1)
-
-
+        
         return occ_score

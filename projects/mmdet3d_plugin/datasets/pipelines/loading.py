@@ -1,9 +1,6 @@
 import numpy as np
-from numpy import random
-import mmcv
 from mmdet.datasets.builder import PIPELINES
-from mmcv.parallel import DataContainer as DC
-import os
+
 
 @PIPELINES.register_module()
 class LoadOccGTFromFile(object):
@@ -17,31 +14,13 @@ class LoadOccGTFromFile(object):
         color_type (str): Color type of the file. Defaults to 'unchanged'.
     """
 
-    def __init__(
-            self,
-            data_root,
-        ):
-        self.data_root = data_root
+    def __init__(self):
+        pass
 
     def __call__(self, results):
-        # print(results.keys())
-        if 'occ_gt_path' in results:
-            occ_gt_path = results['occ_gt_path']
-            occ_gt_path = os.path.join(self.data_root,occ_gt_path)
-
-            occ_labels = np.load(occ_gt_path)
-            semantics = occ_labels['semantics']
-            mask_lidar = occ_labels['mask_lidar']
-            mask_camera = occ_labels['mask_camera']
-        else:
-            semantics = np.zeros((200,200,16),dtype=np.uint8)
-            mask_lidar = np.zeros((200,200,16),dtype=np.uint8)
-            mask_camera = np.zeros((200, 200, 16), dtype=np.uint8)
-
+        occ_labels = np.load(results['occ_path'])
+        semantics = occ_labels['semantics']
         results['voxel_semantics'] = semantics
-        results['mask_lidar'] = mask_lidar
-        results['mask_camera'] = mask_camera
-
 
         return results
 

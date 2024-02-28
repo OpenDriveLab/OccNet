@@ -1,7 +1,48 @@
-
+# OS generated files
 .DS_Store
-data/annotations.json
-data/gts.tar.gz
-data/imgs.tar.gz
-data/**/*.npz
-data/**/*.jpg
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Compiled source
+build
+debug
+Debug
+release
+Release
+x64
+*.so
+*.whl
+
+# VS project files
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.rc
+.vs
+
+# Byte-compiled / optimized / DLL files
+*__pycache__*
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+.Python
+build
+develop-eggs
+dist
+downloads
+
+# IDE
+.idea
+.vscode
+pyrightconfig.json
+
+# Custom
+data
+ckpts
+work_dirs
