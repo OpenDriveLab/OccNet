@@ -67,7 +67,7 @@ Given images from multiple cameras, the goal is to predict the current occupancy
 
 ## Evaluation Metrics
 
-Leaderboard ranking for this challenge is by the intersection-over-union (mIoU) over all classes. 
+Leaderboard ranking for this challenge is by the **Occupancy Score**. It consists of two parts: **Ray-based mIoU**, and absolute velocity error for occupancy flow.
 
 ### Ray-based mIoU
 
@@ -92,11 +92,11 @@ We finally average over distance thresholds of {1, 2, 4} meters and compute the 
 
 For more details about this metric, we will release a technical report within a few days, please stay tuned.
 
-### Occupancy Flow
+### AVE for Occupancy Flow
 
 Here we measure velocity errors for a set of true positives (TP). We use a threshold of 2m distance.
 
-The absolute velocity error is defined for 8 classes ('car', 'truck', 'trailer', 'bus', 'construction_vehicle', 'bicycle', 'motorcycle', 'pedestrian') in m/s. 
+The absolute velocity error (AVE) is defined for 8 classes ('car', 'truck', 'trailer', 'bus', 'construction_vehicle', 'bicycle', 'motorcycle', 'pedestrian') in m/s. 
 
 
 ### Occupancy Score
