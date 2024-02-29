@@ -1,6 +1,7 @@
 <div id="top" align="center">
 
-# CVPR 2024 3D Occupancy and Flow Challenge
+# CVPR 2024 Autonomous Grand Challenge Occupancy and Flow
+
 
 <a href="#devkit">
   <img alt="devkit: v0.1.0" src="https://img.shields.io/badge/devkit-v0.1.0-blueviolet"/>
@@ -36,8 +37,9 @@ If you use the challenge dataset in your paper, please consider citing OccNet wi
   - [Task Definition](#task-definition)
     - [Rules for Occupancy Challenge](#rules-for-occupancy-challenge)
   - [Evaluation Metrics](#evaluation-metrics)
-    - [mIoU](#miou)
-    - [F Score](#f-score)
+    - [Ray-based mIoU](#evaluation-metrics)
+    - [AVE for Occupancy Flow](#evaluation-metrics)
+    - [Occupancy Score](#evaluation-metrics)
   - [Data](#data)
     - [Basic Information](#basic-information)
     - [Download](#download)
@@ -50,24 +52,15 @@ If you use the challenge dataset in your paper, please consider citing OccNet wi
 
 ## Task Definition
 
-Given images from multiple cameras, the goal is to predict the current occupancy state and semantics of each voxel grid in the scene.
-
-### Rules for Occupancy Challenge
-
-* We allow using annotations provided in the nuScenes dataset, and during inference, the input modality of the model should be camera only. 
-* No future frame is allowed during inference.
-* In order to check the compliance, we will ask the participants to provide technical reports to the challenge committee and the participant will be asked to provide a public talk about the method after winning the award.
-* Every submission provides method information. We encourage publishing code, but do not make it a requirement.
-* Each team can have at most one account on the evaluation server. Users that create multiple accounts to circumvent the rules will be excluded from the challenge.
-* Each team can submit at most three results during the challenge. 
-* Faulty submissions that return an error on Eval AI do not count towards the submission limit.
-* Any attempt to circumvent these rules will result in a permanent ban of the team or company from the challenge.
+Given images from multiple cameras, the goal is to predict the semantics and flow of each voxel grid in the scene.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Evaluation Metrics
 
 Leaderboard ranking for this challenge is by the **Occupancy Score**. It consists of two parts: **Ray-based mIoU**, and absolute velocity error for occupancy flow.
+
+The implementation is here: [projects/mmdet3d_plugin/datasets/ray_metrics.py](https://github.com/OpenDriveLab/OccNet/blob/challenge/projects/mmdet3d_plugin/datasets/ray_metrics.py)
 
 ### Ray-based mIoU
 
@@ -78,7 +71,6 @@ Specifically, we emulate LiDAR by projecting query rays into the predicted 3D oc
 We apply the same procedure to the ground-truth occupancy to obtain the groud-truth depth, class label and flow.
 
 A query ray is classified as a **true positive** (TP) if the class labels coincide **and** the L1 error between the ground-truth depth and the predicted depth is less than either a certain threshold (e.g. 2m).
-
 
 Let $C$ be he number of classes. 
 
@@ -97,7 +89,6 @@ For more details about this metric, we will release a technical report within a 
 Here we measure velocity errors for a set of true positives (TP). We use a threshold of 2m distance.
 
 The absolute velocity error (AVE) is defined for 8 classes ('car', 'truck', 'trailer', 'bus', 'construction_vehicle', 'bicycle', 'motorcycle', 'pedestrian') in m/s. 
-
 
 ### Occupancy Score
 
