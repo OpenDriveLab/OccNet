@@ -31,6 +31,10 @@ If you use the challenge dataset in your paper, please consider citing OccNet wi
 }
 ```
 
+- Official website: :globe_with_meridians: [AGC2024](https://huggingface.co/spaces/AGC2024-S/occupancy-and-flow-2024)
+- Evaluation server: :hugs: [Hugging Face](https://huggingface.co/spaces/AGC2024-S/occupancy-and-flow-2024)
+
+
 ## Table of Contents
 - [CVPR 2024 Occupancy and Flow Challenge](#cvpr-2024-occupancy-and-flow-challenge)
   - [Introduction](#introduction)
@@ -174,9 +178,3 @@ Before using the dataset, you should register on the website and agree to the te
 All code within this repository is under [MIT License](./LICENSE).
 
 <p align="right">(<a href="#top">back to top</a>)</p>
-
-
-## Links
-
-> - Official website: :globe_with_meridians: [AGC2024](https://huggingface.co/spaces/AGC2024-S/occupancy-and-flow-2024)
-> - Evaluation server: :hugs: [Hugging Face](https://huggingface.co/spaces/AGC2024-S/occupancy-and-flow-2024)
