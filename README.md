@@ -2,13 +2,13 @@
 
 # CVPR 2024 Autonomous Grand Challenge Occupancy and Flow
 
-
-<a href="#devkit">
-  <img alt="devkit: v0.1.0" src="https://img.shields.io/badge/devkit-v0.1.0-blueviolet"/>
+<a href="https://twitter.com/OpenDriveLab" target="_blank">
+  <img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/OpenDriveLab?style=social&color=brightgreen&logo=twitter" />
 </a>
 <a href="#license">
   <img alt="License: Apache2.0" src="https://img.shields.io/badge/license-Apache%202.0-blue.svg"/>
 </a>
+
 
 <img src="./figs/occupanc_1.gif" width="696px">
 
@@ -39,7 +39,6 @@ If you use the challenge dataset in your paper, please consider citing OccNet wi
 - [CVPR 2024 Occupancy and Flow Challenge](#cvpr-2024-occupancy-and-flow-challenge)
   - [Introduction](#introduction)
   - [Task Definition](#task-definition)
-    - [Rules for Occupancy Challenge](#rules-for-occupancy-challenge)
   - [Evaluation Metrics](#evaluation-metrics)
     - [Ray-based mIoU](#evaluation-metrics)
     - [AVE for Occupancy Flow](#evaluation-metrics)
@@ -51,7 +50,6 @@ If you use the challenge dataset in your paper, please consider citing OccNet wi
     - [Known Issues](#known-issues)
   - [Getting Started](#getting-started)
   - [Submission](#submission)
-  - [Timeline](#challenge-timeline)
   - [License](#license)
 
 ## Task Definition
@@ -96,13 +94,15 @@ The absolute velocity error (AVE) is defined for 8 classes ('car', 'truck', 'tra
 
 ### Occupancy Score
 
-The final occupancy score is defined to be a weighted sum of mIoU and mAVE. Note that the velocity errors are converted to velocity scores as `max(1 - AVE, 0.0)`. That is,
+The final occupancy score is defined to be a weighted sum of mIoU and mAVE. Note that the velocity errors are converted to velocity scores as `max(1 - mAVE, 0.0)`. That is,
 
 ```
-OccScore = mIoU * 0.9 + max(1 - AVE, 0.0) * 0.1
+OccScore = mIoU * 0.9 + max(1 - mAVE, 0.0) * 0.1
 ```
 
 <p align="right">(<a href="#top">back to top</a>)</p>
+
+## Data
 
 ### Basic Information
 <div align="center">
