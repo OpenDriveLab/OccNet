@@ -174,3 +174,9 @@ Before using the dataset, you should register on the website and agree to the te
 All code within this repository is under [MIT License](./LICENSE).
 
 <p align="right">(<a href="#top">back to top</a>)</p>
+
+
+## Links
+
+> - Official website: :globe_with_meridians: [AGC2024](https://huggingface.co/spaces/AGC2024-S/occupancy-and-flow-2024)
+> - Evaluation server: :hugs: [Hugging Face](https://huggingface.co/spaces/AGC2024-S/occupancy-and-flow-2024)
