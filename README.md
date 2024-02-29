@@ -36,7 +36,8 @@ If you use the challenge dataset in your paper, please consider citing OccNet wi
 
 
 ## Table of Contents
-- [CVPR 2024 Occupancy and Flow Challenge](#cvpr-2024-occupancy-and-flow-challenge)
+
+- [CVPR 2024 Autonomous Grand Challenge Occupancy and Flow](#cvpr-2024-occupancy-and-flow-challenge)
   - [Introduction](#introduction)
   - [Task Definition](#task-definition)
   - [Evaluation Metrics](#evaluation-metrics)
@@ -174,7 +175,8 @@ Coming soon.
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ## License
+
 Before using the dataset, you should register on the website and agree to the terms of use of the [nuScenes](https://www.nuscenes.org/nuscenes).
-All code within this repository is under [MIT License](./LICENSE).
+All code within this repository is under [Apache 2.0 License](./LICENSE).
 
 <p align="right">(<a href="#top">back to top</a>)</p>
