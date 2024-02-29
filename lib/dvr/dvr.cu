@@ -7,7 +7,7 @@
 #include <iostream>
 
 #define MAX_D 1446 // 700 + 700 + 45 + 1
-#define FREE_ID 16
+#define MAX_STEP 1000
 
 enum LossType {L1, L2, ABSREL};
 enum PhaseName {TEST, TRAIN};
@@ -72,7 +72,7 @@ __global__ void render_forward_cuda_kernel(
     // torch::PackedTensorAccessor32<scalar_t,5,torch::RestrictPtrTraits> pog,
     torch::PackedTensorAccessor32<scalar_t,2,torch::RestrictPtrTraits> pred_dist,
     torch::PackedTensorAccessor32<scalar_t,2,torch::RestrictPtrTraits> gt_dist,
-    torch::PackedTensorAccessor32<scalar_t,2,torch::RestrictPtrTraits> pred_label,
+    torch::PackedTensorAccessor32<scalar_t,3,torch::RestrictPtrTraits> coord_index,
     PhaseName train_phase) {
 
     // batch index
@@ -245,6 +245,10 @@ __global__ void render_forward_cuda_kernel(
             }
             last_d = _d;
             step ++;
+
+            if (step > MAX_STEP) {
+                break;
+            }
         }
 
         // the total number of voxels visited should not exceed this number
@@ -254,15 +258,24 @@ __global__ void render_forward_cuda_kernel(
             // compute the expected ray distance
             //double exp_d = 0.0;
             double exp_d = d[count-1];
-            double label = FREE_ID;
-            for (int i = 0; i < count; i ++){
+            
+            const int3 &v_init = path[count-1];
+            int x = v_init.x;
+            int y = v_init.y;
+            int z = v_init.z;
+
+            for (int i = 0; i < count; i++) {
                 //printf("%f\t%f\n",p[i], d[i]);
                 //exp_d += p[i] * d[i];
                 const int3 &v = path[i];
                 const double occ = sigma[n][ts][v.z][v.y][v.x];
-                if (occ < FREE_ID) {
+                if (occ > 0.5) {
                     exp_d = d[i];
-                    label = occ;
+                    
+                    x = v.x;
+                    y = v.y;
+                    z = v.z;
+                
                     break;
                 }
 
@@ -285,7 +298,10 @@ __global__ void render_forward_cuda_kernel(
             // write the rendered ray distance (max_d)
             pred_dist[n][c] = exp_d;
             gt_dist[n][c] = gt_d;
-            pred_label[n][c] = label;
+          
+            coord_index[n][c][0] = double(x);
+            coord_index[n][c][1] = double(y);
+            coord_index[n][c][2] = double(z);
 
             // // write occupancy
             // for (int i = 0; i < count; i ++) {
@@ -336,7 +352,8 @@ std::vector<torch::Tensor> render_forward_cuda(
     // perform rendering
     auto gt_dist = -torch::ones({N, M}, device);
     auto pred_dist = -torch::ones({N, M}, device);
-    auto pred_label = torch::ones({N, M}, device) * FREE_ID;
+
+    auto coord_index = torch::zeros({N, M, 3}, device);
 
     PhaseName train_phase;
     if (phase_name.compare("test") == 0) {
@@ -357,14 +374,14 @@ std::vector<torch::Tensor> render_forward_cuda(
                     // pog.packed_accessor32<scalar_t,5,torch::RestrictPtrTraits>(),
                     pred_dist.packed_accessor32<scalar_t,2,torch::RestrictPtrTraits>(),
                     gt_dist.packed_accessor32<scalar_t,2,torch::RestrictPtrTraits>(),
-                    pred_label.packed_accessor32<scalar_t,2,torch::RestrictPtrTraits>(),
+                    coord_index.packed_accessor32<scalar_t,3,torch::RestrictPtrTraits>(),
                     train_phase);
             }));
 
     cudaDeviceSynchronize();
 
     // return {pog, pred_dist, gt_dist};
-    return {pred_dist, gt_dist, pred_label};
+    return {pred_dist, gt_dist, coord_index};
 }
 
 template <typename scalar_t>
@@ -552,6 +569,10 @@ __global__ void render_cuda_kernel(
             }
             last_d = _d;
             step ++;
+
+            if (step > MAX_STEP) {
+                break;
+            }
         }
 
         // the total number of voxels visited should not exceed this number

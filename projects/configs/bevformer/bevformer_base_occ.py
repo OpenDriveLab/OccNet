@@ -197,7 +197,7 @@ data = dict(
              classes=class_names, modality=input_modality, samples_per_gpu=1),
     test=dict(type=dataset_type,
               data_root=data_root,
-              ann_file=data_root + 'nuscenes_infos_test_occ.pkl',
+              ann_file=data_root + 'nuscenes_infos_val_occ.pkl',
               pipeline=test_pipeline, filter_empty_gt=False,
               classes=class_names, modality=input_modality),
     shuffler_sampler=dict(type='DistributedGroupSampler'),

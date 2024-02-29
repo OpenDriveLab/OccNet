@@ -1,4 +1,5 @@
 import math
+import copy
 import numpy as np
 import torch
 from torch.utils.cpp_extension import load
@@ -16,6 +17,11 @@ occ_class_names = [
     'bicycle', 'motorcycle', 'pedestrian', 'traffic_cone', 'barrier',
     'driveable_surface', 'other_flat', 'sidewalk',
     'terrain', 'manmade', 'vegetation', 'free'
+]
+
+flow_class_names = [
+    'car', 'truck', 'trailer', 'bus', 'construction_vehicle',
+    'bicycle', 'motorcycle', 'pedestrian',
 ]
 
 # https://github.com/tarashakhurana/4d-occ-forecasting/blob/ff986082cd6ea10e67ab7839bf0e654736b3f4e2/test_fgbg.py#L29C1-L46C16
@@ -55,7 +61,7 @@ def generate_lidar_rays():
     # prepare lidar ray angles
     pitch_angles = []
     for k in range(10):
-        angle = math.pi / 2 - math.atan((k + 2))
+        angle = math.pi / 2 - math.atan(k + 1)
         pitch_angles.append(-angle)
     
     # nuscenes lidar fov: [0.2107773983152201, -0.5439104895672159] (rad)
@@ -77,53 +83,77 @@ def generate_lidar_rays():
     return np.array(lidar_rays, dtype=np.float32)
 
 
-def process_one_sample(sem_pred, lidar_rays):
+def process_one_sample(sem_pred, lidar_rays, output_origin, flow_pred):
     # lidar origin in ego coordinate
-    lidar_origin = torch.tensor([[[0.9858, 0.0000, 1.8402]]])
-    lidar_endpts = lidar_rays[None] + lidar_origin
-    lidar_tindex = torch.zeros([1, lidar_endpts.shape[1]])
+    # lidar_origin = torch.tensor([[[0.9858, 0.0000, 1.8402]]])
+    T = output_origin.shape[1]
+    pred_pcds_t = []
 
-    sem_pred = torch.from_numpy(sem_pred).permute(2, 1, 0)
-    sem_pred = sem_pred[None, None, :].contiguous().float()
+    free_id = len(occ_class_names) - 1 
+    occ_pred = copy.deepcopy(sem_pred)
+    occ_pred[sem_pred < free_id] = 1
+    occ_pred[sem_pred == free_id] = 0
+    occ_pred = torch.from_numpy(occ_pred).permute(2, 1, 0)
+    occ_pred = occ_pred[None, None, :].contiguous().float()
 
     offset = torch.Tensor(_pc_range[:3])[None, None, :]
     scaler = torch.Tensor([_voxel_size] * 3)[None, None, :]
 
-    output_origin_render = ((lidar_origin - offset) / scaler).float()  # [1, 1, 3]
-    output_points_render = ((lidar_endpts - offset) / scaler).float()  # [1, N, 3]
-    output_tindex_render = lidar_tindex  # [1, N], all zeros
+    lidar_tindex = torch.zeros([1, lidar_rays.shape[0]])
+    
+    for t in range(T): 
+        lidar_origin = output_origin[:, t:t+1, :]  # [1, 1, 3]
+        lidar_endpts = lidar_rays[None] + lidar_origin  # [1, 15840, 3]
 
-    with torch.no_grad():
-        pred_dist, _, pred_label = dvr.render_forward(
-            sem_pred.cuda(),
-            output_origin_render.cuda(),
-            output_points_render.cuda(),
-            output_tindex_render.cuda(),
-            [1] + _occ_size[::-1],
-            "test"
+        output_origin_render = ((lidar_origin - offset) / scaler).float()  # [1, 1, 3]
+        output_points_render = ((lidar_endpts - offset) / scaler).float()  # [1, N, 3]
+        output_tindex_render = lidar_tindex  # [1, N], all zeros
+
+        with torch.no_grad():
+            pred_dist, _, coord_index = dvr.render_forward(
+                occ_pred.cuda(),
+                output_origin_render.cuda(),
+                output_points_render.cuda(),
+                output_tindex_render.cuda(),
+                [1, 16, 200, 200],
+                "test"
+            )
+            pred_dist *= _voxel_size
+
+        pred_pcds = get_rendered_pcds(
+            lidar_origin[0].cpu().numpy(),
+            lidar_endpts[0].cpu().numpy(),
+            lidar_tindex[0].cpu().numpy(),
+            pred_dist[0].cpu().numpy()
         )
-        pred_dist *= _voxel_size
+        coord_index = coord_index[0, :, :].int().cpu()  # [N, 3]
 
-    pred_pcds = get_rendered_pcds(
-        lidar_origin[0].cpu().numpy(),
-        lidar_endpts[0].cpu().numpy(),
-        lidar_tindex[0].cpu().numpy(),
-        pred_dist[0].cpu().numpy()
-    )
+        pred_flow = torch.from_numpy(flow_pred[coord_index[:, 0], coord_index[:, 1], coord_index[:, 2]])  # [N, 2]
+        pred_label = torch.from_numpy(sem_pred[coord_index[:, 0], coord_index[:, 1], coord_index[:, 2]])[:, None]  # [N, 1]
+        pred_dist = pred_dist[0, :, None].cpu()
+        pred_pcds = torch.cat([pred_pcds[0], pred_label, pred_dist, pred_flow], dim=-1)  # [N, 7]  5: [x, y, z, label, dist, dx, dy]
 
-    pred_label = pred_label[0, :, None].int().cpu()
-    pred_dist = pred_dist[0, :, None].cpu()
-    pred_pcds = torch.cat([pred_pcds[0], pred_label, pred_dist], dim=-1)  # [N, 5]  5: [x, y, z, label, dist]
+        pred_pcds_t.append(pred_pcds)
 
-    return pred_pcds.numpy()
+    pred_pcds_t = torch.cat(pred_pcds_t, dim=0)
+   
+    return pred_pcds_t.numpy()
+
 
 
 def calc_metrics(pcd_pred_list, pcd_gt_list):
-    thresholds = [1, 2, 3]
+    thresholds = [1, 2, 4]
 
     gt_cnt = np.zeros([len(occ_class_names)])
     pred_cnt = np.zeros([len(occ_class_names)])
     tp_cnt = np.zeros([len(thresholds), len(occ_class_names)])
+
+    ave = np.zeros([len(thresholds), len(occ_class_names)])
+    for i, cls in enumerate(occ_class_names):
+        if cls not in flow_class_names:
+            ave[:, i] = np.nan
+
+    ave_count = np.zeros([len(thresholds), len(occ_class_names)])
 
     for pcd_pred, pcd_gt in zip(pcd_pred_list, pcd_gt_list):
         for j, threshold in enumerate(thresholds):
@@ -148,15 +178,25 @@ def calc_metrics(pcd_pred_list, pcd_gt_list):
                 tp_mask = np.logical_and(tp_cls, tp_dist_mask)
                 tp_cnt[j][i] += tp_mask.sum()
 
-    meanIoU = []
-
+                # flow L2 error
+                if cls in flow_class_names and tp_mask.sum() > 0:
+                    gt_flow_i = pcd_gt[tp_mask, 5:7]
+                    pred_flow_i = pcd_pred[tp_mask, 5:7]
+                    flow_error = np.linalg.norm(gt_flow_i - pred_flow_i, axis=1)
+                    print(flow_error.shape)
+                    ave[j][i] += np.sum(flow_error)
+                    ave_count[j][i] += flow_error.shape[0]
+    
+    iou_list = []
     for j, threshold in enumerate(thresholds):
-        meanIoU.append((tp_cnt[j] / (gt_cnt + pred_cnt - tp_cnt[j]))[:-1])
+        iou_list.append((tp_cnt[j] / (gt_cnt + pred_cnt - tp_cnt[j]))[:-1])
 
-    return meanIoU
+    ave_list = ave[1][:-1] / ave_count[1][:-1]  # use threshold = 2
+        
+    return iou_list, ave_list
 
 
-def main(pred_list, gt_list):
+def main(sem_pred_list, sem_gt_list, flow_pred_list, flow_gt_list, lidar_origin_list):
     torch.cuda.empty_cache()
 
     # generate lidar rays
@@ -164,12 +204,14 @@ def main(pred_list, gt_list):
     lidar_rays = torch.from_numpy(lidar_rays)
 
     pcd_pred_list, pcd_gt_list = [], []
-    for sem_pred, sem_gt in tqdm(zip(pred_list, gt_list), ncols=50):
+    for sem_pred, sem_gt, flow_pred, flow_gt, lidar_origins in tqdm(zip(sem_pred_list, sem_gt_list, flow_pred_list, flow_gt_list, lidar_origin_list), ncols=50):
         sem_pred = np.reshape(sem_pred, [200, 200, 16])
         sem_gt = np.reshape(sem_gt, [200, 200, 16])
+        flow_pred = np.reshape(flow_pred, [200, 200, 16, 2])
+        flow_gt = np.reshape(flow_gt, [200, 200, 16, 2])
 
-        pcd_pred = process_one_sample(sem_pred, lidar_rays)
-        pcd_gt = process_one_sample(sem_gt, lidar_rays)
+        pcd_pred = process_one_sample(sem_pred, lidar_rays, lidar_origins, flow_pred)
+        pcd_gt = process_one_sample(sem_gt, lidar_rays, lidar_origins, flow_gt)
 
         # evalute on non-free rays
         valid_mask = (pcd_gt[:, 3] != len(occ_class_names) - 1)
@@ -180,25 +222,32 @@ def main(pred_list, gt_list):
         pcd_pred_list.append(pcd_pred)
         pcd_gt_list.append(pcd_gt)
 
-    meanIoU = calc_metrics(pcd_pred_list, pcd_gt_list)
+    iou_list, ave_list = calc_metrics(pcd_pred_list, pcd_gt_list)
     
     table = PrettyTable([
         'Class Names',
-        'mIoU@1', 'mIoU@2', 'mIoU@3'
+        'IoU@1', 'IoU@2', 'IoU@4', 'AVE'
     ])
     table.float_format = '.3'
 
     for i in range(len(occ_class_names) - 1):
         table.add_row([
             occ_class_names[i],
-            meanIoU[0][i], meanIoU[1][i], meanIoU[2][i]
+            iou_list[0][i], iou_list[1][i], iou_list[2][i], ave_list[i]
         ], divider=(i == len(occ_class_names) - 2))
     
     table.add_row([
         'MEAN',
-        np.mean(meanIoU[0]), np.mean(meanIoU[1]), np.mean(meanIoU[2])
+        np.nanmean(iou_list[0]), np.nanmean(iou_list[1]), np.nanmean(iou_list[2]), np.nanmean(ave_list)
     ])
 
     print(table)
+
+    miou = np.nanmean(iou_list)
+    mave = np.nanmean(ave_list)
+    
+    occ_score = miou * 0.9 + max(1 - mave, 0.0) * 0.1
+    
+    print(' --- Occ score:', occ_score)
 
     torch.cuda.empty_cache()

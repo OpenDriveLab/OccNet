@@ -242,7 +242,13 @@ class BEVFormerOcc(MVXTwoStageDetector):
             img_metas[0], img[0], prev_bev=None, **kwargs)
         # During inference, we save the BEV features and ego motion of each timestamp.
 
-        return occ_results
+        # TODO
+        flow_results = torch.rand(list(occ_results.shape) + [2], device=occ_results.device)
+        
+        return {
+            'occ_results': occ_results,
+            'flow_results': flow_results,
+        }
 
     def simple_test_pts(self, x, img_metas, prev_bev=None, rescale=False):
         """Test function"""

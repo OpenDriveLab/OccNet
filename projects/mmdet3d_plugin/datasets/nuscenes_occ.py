@@ -9,6 +9,10 @@ from mmdet.datasets import DATASETS
 from nuscenes.eval.common.utils import quaternion_yaw, Quaternion
 from nuscenes.utils.geometry_utils import transform_matrix
 from .ray_metrics import main as ray_based_miou
+from torch.utils.data import DataLoader
+from .nuscenes_ego_pose_loader import nuScenesDataset
+from nuscenes.nuscenes import NuScenes
+
 
 
 @DATASETS.register_module()
@@ -128,15 +132,44 @@ class NuSceneOcc(NuScenesDataset):
 
     def evaluate_miou(self, occ_results, runner=None, show_dir=None, **eval_kwargs):
         occ_gts = []
+        flow_gts = []
+        lidar_origins = []
 
         print('\nStarting Evaluation...')
-        for index, occ_pred in enumerate(tqdm(occ_results)):
-            info = self.data_infos[index]
+
+        sem_results = [r['occ_results'].cpu().numpy() for r in occ_results]
+        flow_results = [r['flow_results'].cpu().numpy() for r in occ_results]
+
+        data_loader_kwargs={
+            "pin_memory": False,
+            "shuffle": False,
+            "batch_size": 1,
+            "num_workers": 8,
+        }
+
+        nusc = NuScenes('v1.0-trainval', 'data/nuscenes')
+
+        data_loader = DataLoader(
+            nuScenesDataset(nusc, 'val'),
+            **data_loader_kwargs,
+        )
+        
+        for i, batch in tqdm(enumerate(data_loader), ncols=50):
+            if i >= len(self.data_infos):
+                break
+
+            output_origin = batch[1]
+            lidar_origins.append(output_origin)
+        
+            info = self.data_infos[i]
             occ_gt = np.load(info['occ_path'], allow_pickle=True)
             gt_semantics = occ_gt['semantics']
-            occ_gts.append(gt_semantics)
+            gt_flow = occ_gt['flow']
 
-        ray_based_miou(occ_results, occ_gts)
+            occ_gts.append(gt_semantics)
+            flow_gts.append(gt_flow)
+        
+        ray_based_miou(sem_results, occ_gts, flow_results, flow_gts, lidar_origins)
 
     def format_results(self, occ_results,submission_prefix,**kwargs):
         if submission_prefix is not None:
