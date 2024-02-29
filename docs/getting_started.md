@@ -6,7 +6,7 @@ Follow https://github.com/fundamentalvision/BEVFormer/blob/master/docs/install.m
 
 1. Download the nuScenes dataset and put in into `data/nuscenes`
 
-2. Download our `openocc_v2.zip` and `infos.zip` and unzip them in `data/nuscenes`
+2. Download our `openocc_v2.zip` and `infos.zip` from [HERE](https://drive.google.com/drive/folders/1lpqjXZRKEvNHFhsxTf0MOE13AZ3q4bTq) and unzip them in `data/nuscenes`. 
 
 3. Organize your folder structure as below：
 
@@ -31,7 +31,8 @@ data/nuscenes
 ## Testing
 
 ```
-./tools/dist_test.sh projects/configs/bevformer/bevformer_base_occ.py work_dirs/bevformer_base_occ/epoch_24.pth 8
+export CUDA_VISIBLE_DEVICES=0
+./tools/dist_test.sh projects/configs/bevformer/bevformer_base_occ.py work_dirs/bevformer_base_occ/epoch_24.pth 1
 ```
 
 ## Test Submission
