@@ -1,3 +1,6 @@
+# Acknowledgments: https://github.com/tarashakhurana/4d-occ-forecasting
+# Modified by Haisong Liu
+
 import torch
 import numpy as np
 from pyquaternion import Quaternion

@@ -1,3 +1,6 @@
+// Acknowledgments: https://github.com/tarashakhurana/4d-occ-forecasting
+// Modified by Haisong Liu
+
 #include <string>
 #include <torch/extension.h>
 #include <vector>

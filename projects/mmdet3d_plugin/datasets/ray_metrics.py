@@ -1,4 +1,5 @@
 # Acknowledgments: https://github.com/tarashakhurana/4d-occ-forecasting
+# Modified by Haisong Liu
 
 import math
 import copy
@@ -184,7 +185,6 @@ def calc_metrics(pcd_pred_list, pcd_gt_list):
                     gt_flow_i = pcd_gt[tp_mask, 5:7]
                     pred_flow_i = pcd_pred[tp_mask, 5:7]
                     flow_error = np.linalg.norm(gt_flow_i - pred_flow_i, axis=1)
-                    print(flow_error.shape)
                     ave[j][i] += np.sum(flow_error)
                     ave_count[j][i] += flow_error.shape[0]
     

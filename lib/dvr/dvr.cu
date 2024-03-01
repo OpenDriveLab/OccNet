@@ -1,3 +1,6 @@
+// Acknowledgments: https://github.com/tarashakhurana/4d-occ-forecasting
+// Modified by Haisong Liu
+
 #include <torch/extension.h>
 #include <stdio.h>
 #include <cuda.h>
