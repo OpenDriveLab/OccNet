@@ -1,3 +1,5 @@
+# Acknowledgments: https://github.com/tarashakhurana/4d-occ-forecasting
+
 import math
 import copy
 import numpy as np
@@ -140,7 +142,6 @@ def process_one_sample(sem_pred, lidar_rays, output_origin, flow_pred):
     return pred_pcds_t.numpy()
 
 
-
 def calc_metrics(pcd_pred_list, pcd_gt_list):
     thresholds = [1, 2, 4]
 
@@ -161,7 +162,7 @@ def calc_metrics(pcd_pred_list, pcd_gt_list):
             depth_pred = pcd_pred[:, 4]
             depth_gt = pcd_gt[:, 4]
             l1_error = np.abs(depth_pred - depth_gt)
-            tp_dist_mask = np.logical_or(l1_error < threshold, l1_error / depth_gt < 0.1)
+            tp_dist_mask = (l1_error < threshold)
             
             for i, cls in enumerate(occ_class_names):
                 cls_id = occ_class_names.index(cls)
@@ -192,7 +193,7 @@ def calc_metrics(pcd_pred_list, pcd_gt_list):
         iou_list.append((tp_cnt[j] / (gt_cnt + pred_cnt - tp_cnt[j]))[:-1])
 
     ave_list = ave[1][:-1] / ave_count[1][:-1]  # use threshold = 2
-        
+    
     return iou_list, ave_list
 
 
@@ -238,7 +239,10 @@ def main(sem_pred_list, sem_gt_list, flow_pred_list, flow_gt_list, lidar_origin_
     
     table.add_row([
         'MEAN',
-        np.nanmean(iou_list[0]), np.nanmean(iou_list[1]), np.nanmean(iou_list[2]), np.nanmean(ave_list)
+        np.nanmean(iou_list[0]),
+        np.nanmean(iou_list[1]),
+        np.nanmean(iou_list[2]),
+        np.nanmean(ave_list)
     ])
 
     print(table)
