@@ -54,6 +54,7 @@ class BEVFormerOccHead(BaseModule):
                  bev_h=30,
                  bev_w=30,
                  loss_occ=None,
+                 loss_flow=None,
                  use_mask=False,
                  positional_encoding=None,
                  **kwargs):
@@ -77,6 +78,7 @@ class BEVFormerOccHead(BaseModule):
         super(BEVFormerOccHead, self).__init__()
 
         self.loss_occ = build_loss(loss_occ)
+        self.loss_flow = build_loss(loss_flow)
         self.positional_encoding = build_positional_encoding(
             positional_encoding)
         self.transformer = build_transformer(transformer)
@@ -147,11 +149,12 @@ class BEVFormerOccHead(BaseModule):
                 img_metas=img_metas,
                 prev_bev=prev_bev
             )
-        bev_embed, occ_outs = outputs
+        bev_embed, occ_outs, flow_outs = outputs
 
         outs = {
             'bev_embed': bev_embed,
             'occ':occ_outs,
+            'flow':flow_outs
         }
 
         return outs
@@ -161,6 +164,7 @@ class BEVFormerOccHead(BaseModule):
              # gt_bboxes_list,
              # gt_labels_list,
              voxel_semantics,
+             voxel_flow,
              mask_camera,
              preds_dicts,
              gt_bboxes_ignore=None,
@@ -168,23 +172,28 @@ class BEVFormerOccHead(BaseModule):
 
         loss_dict=dict()
         occ=preds_dicts['occ']
-        losses = self.loss_single(voxel_semantics,mask_camera,occ)
-        loss_dict['loss_occ']=losses
+        flow=preds_dicts['flow']
+        loss_occ, loss_flow = self.loss_single(voxel_semantics,voxel_flow,mask_camera,occ,flow)
+        loss_dict['loss_occ']=loss_occ
+        loss_dict['loss_flow']=loss_flow
         return loss_dict
 
-    def loss_single(self,voxel_semantics,mask_camera,preds):
+    def loss_single(self,voxel_semantics,voxel_flow,mask_camera,occ,flow):
         voxel_semantics=voxel_semantics.long()
         if self.use_mask:
             voxel_semantics=voxel_semantics.reshape(-1)
-            preds=preds.reshape(-1,self.num_classes)
+            occ=occ.reshape(-1,self.num_classes)
             mask_camera=mask_camera.reshape(-1)
             num_total_samples=mask_camera.sum()
-            loss_occ=self.loss_occ(preds,voxel_semantics,mask_camera, avg_factor=num_total_samples)
+            loss_occ=self.loss_occ(occ,voxel_semantics,mask_camera, avg_factor=num_total_samples)
         else:
             voxel_semantics = voxel_semantics.reshape(-1)
-            preds = preds.reshape(-1, self.num_classes)
-            loss_occ = self.loss_occ(preds, voxel_semantics,)
-        return loss_occ
+            voxel_flow = voxel_flow.reshape(-1, 2)
+            occ = occ.reshape(-1, self.num_classes)
+            loss_occ = self.loss_occ(occ, voxel_semantics,)
+            flow = flow.reshape(-1, 2)
+            loss_flow = self.loss_flow(flow, voxel_flow)
+        return loss_occ, loss_flow
 
     @force_fp32(apply_to=('preds'))
     def get_occ(self, preds_dicts, img_metas, rescale=False):
@@ -202,4 +211,6 @@ class BEVFormerOccHead(BaseModule):
         occ_score=occ_out.softmax(-1)
         occ_score=occ_score.argmax(-1)
         
-        return occ_score
+        flow_out = preds_dicts['flow']
+
+        return occ_score, flow_out

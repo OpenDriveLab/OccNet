@@ -20,7 +20,9 @@ class LoadOccGTFromFile(object):
     def __call__(self, results):
         occ_labels = np.load(results['occ_path'])
         semantics = occ_labels['semantics']
+        flow = occ_labels['flow']
         results['voxel_semantics'] = semantics
+        results['voxel_flow'] = flow
 
         return results
 

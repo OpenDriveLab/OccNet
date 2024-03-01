@@ -78,6 +78,7 @@ model = dict(
             type='CrossEntropyLoss',
             use_sigmoid=False,
             loss_weight=1.0),
+        loss_flow=dict(type='L1Loss', loss_weight=0.25),
         transformer=dict(
             type='TransformerOcc',
             pillar_h=16,
@@ -152,7 +153,7 @@ train_pipeline = [
     dict(type='NormalizeMultiviewImage', **img_norm_cfg),
     dict(type='PadMultiViewImage', size_divisor=32),
     dict(type='DefaultFormatBundle3D', class_names=class_names),
-    dict(type='CustomCollect3D', keys=['img','voxel_semantics'] )
+    dict(type='CustomCollect3D', keys=['img', 'voxel_semantics', 'voxel_flow'] )
 ]
 
 test_pipeline = [

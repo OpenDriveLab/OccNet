@@ -134,6 +134,11 @@ class TransformerOcc(BaseModule):
             nn.Softplus(),
             nn.Linear(self.out_dim*2,num_classes),
         )
+        self.flow_predicter = nn.Sequential(
+            nn.Linear(self.out_dim, self.out_dim*2),
+            nn.ReLU(),
+            nn.Linear(self.out_dim*2, 2),
+        )
         self.two_stage_num_proposals = two_stage_num_proposals
         self.init_layers()
         self.rotate_center = rotate_center
@@ -309,6 +314,8 @@ class TransformerOcc(BaseModule):
         else:
             outputs = self.decoder(bev_embed.permute(0,2,3,1))
             outputs = outputs.view(bs, bev_h, bev_w,self.pillar_h,self.out_dim)
-        outputs = self.predicter(outputs)
-        # print('outputs',type(outputs))
-        return bev_embed, outputs
+
+        flow_pred = self.flow_predicter(outputs)
+        occ_pred = self.predicter(outputs)
+        
+        return bev_embed, occ_pred, flow_pred

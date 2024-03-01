@@ -111,6 +111,7 @@ class BEVFormerOcc(MVXTwoStageDetector):
                           gt_bboxes_3d,
                           gt_labels_3d,
                           voxel_semantics,
+                          voxel_flow,
                           mask_camera,
                           img_metas,
                           gt_bboxes_ignore=None,
@@ -132,7 +133,7 @@ class BEVFormerOcc(MVXTwoStageDetector):
 
         outs = self.pts_bbox_head(
             pts_feats, img_metas, prev_bev)
-        loss_inputs = [voxel_semantics, mask_camera, outs]
+        loss_inputs = [voxel_semantics, voxel_flow, mask_camera, outs]
         losses = self.pts_bbox_head.loss(*loss_inputs, img_metas=img_metas)
         return losses
 
@@ -183,6 +184,7 @@ class BEVFormerOcc(MVXTwoStageDetector):
                       gt_bboxes_3d=None,
                       gt_labels_3d=None,
                       voxel_semantics=None,
+                      voxel_flow=None,
                       mask_lidar=None,
                       mask_camera=None,
                       gt_labels=None,
@@ -220,7 +222,7 @@ class BEVFormerOcc(MVXTwoStageDetector):
         img_feats = self.extract_feat(img=img, img_metas=img_metas)
         losses = dict()
         losses_pts = self.forward_pts_train(img_feats, gt_bboxes_3d,
-                                            gt_labels_3d, voxel_semantics, mask_camera, img_metas,
+                                            gt_labels_3d, voxel_semantics, voxel_flow, mask_camera, img_metas,
                                             gt_bboxes_ignore, prev_bev=None)
 
         losses.update(losses_pts)
@@ -238,13 +240,10 @@ class BEVFormerOcc(MVXTwoStageDetector):
                     name, type(var)))
         img = [img] if img is None else img
         
-        new_prev_bev, occ_results = self.simple_test(
+        new_prev_bev, occ_results, flow_results = self.simple_test(
             img_metas[0], img[0], prev_bev=None, **kwargs)
         # During inference, we save the BEV features and ego motion of each timestamp.
 
-        # TODO
-        flow_results = torch.rand(list(occ_results.shape) + [2], device=occ_results.device)
-        
         return {
             'occ_results': occ_results,
             'flow_results': flow_results,
@@ -254,18 +253,18 @@ class BEVFormerOcc(MVXTwoStageDetector):
         """Test function"""
         outs = self.pts_bbox_head(x, img_metas, prev_bev=prev_bev, test=True)
 
-        occ = self.pts_bbox_head.get_occ(
+        occ, flow = self.pts_bbox_head.get_occ(
             outs, img_metas, rescale=rescale)
 
-        return outs['bev_embed'], occ
+        return outs['bev_embed'], occ, flow
 
     def simple_test(self, img_metas, img=None, prev_bev=None, rescale=False):
         """Test function without augmentaiton."""
         img_feats = self.extract_feat(img=img, img_metas=img_metas)
 
         # bbox_list = [dict() for i in range(len(img_metas))]
-        new_prev_bev, occ = self.simple_test_pts(
+        new_prev_bev, occ, flow = self.simple_test_pts(
             img_feats, img_metas, prev_bev, rescale=rescale)
         # for result_dict, pts_bbox in zip(bbox_list, bbox_pts):
         #     result_dict['pts_bbox'] = pts_bbox
-        return new_prev_bev, occ
+        return new_prev_bev, occ, flow
