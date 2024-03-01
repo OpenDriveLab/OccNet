@@ -129,7 +129,7 @@ OccScore = mIoU * 0.9 + max(1 - mAVE, 0.0) * 0.1
 
 1. Download the nuScenes dataset and put in into `data/nuscenes`
 
-2. Download our `openocc_v2.zip` and `infos.zip` from [HERE](https://drive.google.com/drive/folders/1lpqjXZRKEvNHFhsxTf0MOE13AZ3q4bTq)
+2. Download our `openocc_v2.zip` and `infos.zip` from [OpenDataLab](https://opendatalab.com/OpenDriveLab/CVPR24-Occ-Flow-Challenge/tree/main) or [Google Drive](https://drive.google.com/drive/folders/1lpqjXZRKEvNHFhsxTf0MOE13AZ3q4bTq)
 
 3. Unzip them in `data/nuscenes`
 
