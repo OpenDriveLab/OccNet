@@ -11,25 +11,25 @@ LINE_SEGMENTS = [
     [4, 0], [3, 7], [5, 1], [6, 2],  # lines along x-axis
     [5, 4], [5, 6], [6, 7], [7, 4],  # lines along x-axis
     [0, 1], [1, 2], [2, 3], [3, 0]]  # lines along y-axis
-colors_map = np.array(
-    [
-        # [0,   0,   0, 255],  # 0 undefined
-        [255, 158, 0, 255],  # 1 car  orange
-        [0, 0, 230, 255],    # 2 pedestrian  Blue
-        [47, 79, 79, 255],   # 3 sign  Darkslategrey
-        [220, 20, 60, 255],  # 4 CYCLIST  Crimson
-        [255, 69, 0, 255],   # 5 traiffic_light  Orangered
-        [255, 140, 0, 255],  # 6 pole  Darkorange
-        [233, 150, 70, 255], # 7 construction_cone  Darksalmon
-        [255, 61, 99, 255],  # 8 bycycle  Red
-        [112, 128, 144, 255],# 9 motorcycle  Slategrey
-        [222, 184, 135, 255],# 10 building Burlywood
-        [0, 175, 0, 255],    # 11 vegetation  Green
-        [165, 42, 42, 255],  # 12 trunk  nuTonomy green
-        [0, 207, 191, 255],  # 13 curb, road, lane_marker, other_ground
-        [75, 0, 75, 255], # 14 walkable, sidewalk
-        [255, 0, 0, 255], # 15 unobsrvd
-    ])
+color_map = np.array([
+    [0, 150, 245, 255],  # car                  blue
+    [160, 32, 240, 255],  # truck                purple
+    [135, 60, 0, 255],  # trailer              brown
+    [255, 255, 0, 255],  # bus                  yellow
+    [0, 255, 255, 255],  # construction_vehicle cyan
+    [255, 192, 203, 255],  # bicycle              pink
+    [200, 180, 0, 255],  # motorcycle           dark orange
+    [255, 0, 0, 255],  # pedestrian           red
+    [255, 240, 150, 255],  # traffic_cone         light yellow
+    [255, 120, 50, 255],  # barrier              orangey
+    [255, 0, 255, 255],  # driveable_surface    dark pink
+    [175,   0,  75, 255],       # other_flat           dark red
+    [75, 0, 75, 255],  # sidewalk             dard purple
+    [150, 240, 80, 255],  # terrain              light green
+    [230, 230, 250, 255],  # manmade              white
+    [0, 175, 0, 255],  # vegetation           green
+    [255, 255, 255, 255],  # free             white
+], dtype=np.uint8)
 color = colors_map[:, :3] / 255
 
 
