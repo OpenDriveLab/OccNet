@@ -18,6 +18,13 @@ class_names = [
     'car', 'truck', 'construction_vehicle', 'bus', 'trailer', 'barrier',
     'motorcycle', 'bicycle', 'pedestrian', 'traffic_cone'
 ]
+# For OpenOcc v2 we have 17 classes (including `free`)
+occ_class_names = [
+    'car', 'truck', 'trailer', 'bus', 'construction_vehicle',
+    'bicycle', 'motorcycle', 'pedestrian', 'traffic_cone', 'barrier',
+    'driveable_surface', 'other_flat', 'sidewalk',
+    'terrain', 'manmade', 'vegetation', 'free'
+]
 
 input_modality = dict(
     use_lidar=False,
@@ -30,7 +37,7 @@ _dim_ = 256
 _pos_dim_ = _dim_//2
 _ffn_dim_ = _dim_*2
 _num_levels_ = 4
-_num_classes_ = 17
+_num_classes_ = len(occ_class_names)
 bev_h_ = 200
 bev_w_ = 200
 
