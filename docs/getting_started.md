@@ -6,7 +6,7 @@ Follow https://github.com/fundamentalvision/BEVFormer/blob/master/docs/install.m
 
 1. Download the nuScenes dataset and put in into `data/nuscenes`
 
-2. Download our `openocc_v2.zip` and `infos.zip` from [HERE](https://drive.google.com/drive/folders/1lpqjXZRKEvNHFhsxTf0MOE13AZ3q4bTq) and unzip them in `data/nuscenes`. 
+2. Download our `openocc_v2.1.zip` and `infos.zip` from [HERE](https://drive.google.com/drive/folders/1lpqjXZRKEvNHFhsxTf0MOE13AZ3q4bTq) and unzip them in `data/nuscenes`. 
 
 3. Organize your folder structure as below：
 
