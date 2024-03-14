@@ -34,11 +34,16 @@ If you use the challenge dataset in your paper, please consider citing OccNet wi
 - Official website: :globe_with_meridians: [AGC2024](https://huggingface.co/spaces/AGC2024-S/occupancy-and-flow-2024)
 - Evaluation server: :hugs: [Hugging Face](https://huggingface.co/spaces/AGC2024-S/occupancy-and-flow-2024)
 
+## News
+
+- 2024-03-01: The challenge begins.
+- 2024-03-14: We release a new version (`openocc_v2.1`) of the occupancy ground-truth, including some bug fixes regarding the occupancy flow. **Delete the old version and download the new one!** Please refer to [getting_started](docs/getting_started.md) for details.
 
 ## Table of Contents
 
 - [CVPR 2024 Autonomous Grand Challenge Occupancy and Flow](#cvpr-2024-occupancy-and-flow-challenge)
   - [Introduction](#introduction)
+  - [News](#news)
   - [Task Definition](#task-definition)
   - [Evaluation Metrics](#evaluation-metrics)
     - [Ray-based mIoU](#evaluation-metrics)
