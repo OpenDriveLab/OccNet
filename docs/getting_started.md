@@ -37,10 +37,16 @@ export CUDA_VISIBLE_DEVICES=0
 
 ## Test Submission
 
-TBD
+1. Fill your information in `projects/mmdet3d_plugin/datasets/nuscenes_occ.py` (Line 215).
 
+2. Test the baseline model on the test split with 8 GPUs, and generate the submission to the official evaluation server.
+
+```
+./tools/dist_test.sh projects/configs/bevformer/bevformer_base_occ_test.py work_dirs/bevformer_base_occ/epoch_24.pth 8 --format-only --eval-options 'submission_prefix=./occ_submission'
+```
+
+3. The submission file is located in `occ_submission/submission.gz`. Good luck!
 
 ### Performance
 
 TBD
-

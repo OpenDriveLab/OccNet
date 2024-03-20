@@ -134,7 +134,7 @@ def process_one_sample(sem_pred, lidar_rays, output_origin, flow_pred):
         pred_flow = torch.from_numpy(flow_pred[coord_index[:, 0], coord_index[:, 1], coord_index[:, 2]])  # [N, 2]
         pred_label = torch.from_numpy(sem_pred[coord_index[:, 0], coord_index[:, 1], coord_index[:, 2]])[:, None]  # [N, 1]
         pred_dist = pred_dist[0, :, None].cpu()
-        pred_pcds = torch.cat([pred_pcds[0], pred_label, pred_dist, pred_flow], dim=-1)  # [N, 7]  5: [x, y, z, label, dist, dx, dy]
+        pred_pcds = torch.cat([pred_label.float(), pred_dist, pred_flow], dim=-1)
 
         pred_pcds_t.append(pred_pcds)
 
@@ -160,15 +160,15 @@ def calc_metrics(pcd_pred_list, pcd_gt_list):
     for pcd_pred, pcd_gt in zip(pcd_pred_list, pcd_gt_list):
         for j, threshold in enumerate(thresholds):
             # L1
-            depth_pred = pcd_pred[:, 4]
-            depth_gt = pcd_gt[:, 4]
+            depth_pred = pcd_pred[:, 1]
+            depth_gt = pcd_gt[:, 1]
             l1_error = np.abs(depth_pred - depth_gt)
             tp_dist_mask = (l1_error < threshold)
             
             for i, cls in enumerate(occ_class_names):
                 cls_id = occ_class_names.index(cls)
-                cls_mask_pred = (pcd_pred[:, 3] == cls_id)
-                cls_mask_gt = (pcd_gt[:, 3] == cls_id)
+                cls_mask_pred = (pcd_pred[:, 0] == cls_id)
+                cls_mask_gt = (pcd_gt[:, 0] == cls_id)
 
                 gt_cnt_i = cls_mask_gt.sum()
                 pred_cnt_i = cls_mask_pred.sum()
@@ -182,8 +182,8 @@ def calc_metrics(pcd_pred_list, pcd_gt_list):
 
                 # flow L2 error
                 if cls in flow_class_names and tp_mask.sum() > 0:
-                    gt_flow_i = pcd_gt[tp_mask, 5:7]
-                    pred_flow_i = pcd_pred[tp_mask, 5:7]
+                    gt_flow_i = pcd_gt[tp_mask, 2:4]
+                    pred_flow_i = pcd_pred[tp_mask, 2:4]
                     flow_error = np.linalg.norm(gt_flow_i - pred_flow_i, axis=1)
                     ave[j][i] += np.sum(flow_error)
                     ave_count[j][i] += flow_error.shape[0]
@@ -215,7 +215,7 @@ def main(sem_pred_list, sem_gt_list, flow_pred_list, flow_gt_list, lidar_origin_
         pcd_gt = process_one_sample(sem_gt, lidar_rays, lidar_origins, flow_gt)
 
         # evalute on non-free rays
-        valid_mask = (pcd_gt[:, 3] != len(occ_class_names) - 1)
+        valid_mask = (pcd_gt[:, 0].astype(np.int32) != len(occ_class_names) - 1)
         pcd_pred = pcd_pred[valid_mask]
         pcd_gt = pcd_gt[valid_mask]
 

@@ -175,7 +175,52 @@ Please refer to [getting_started](docs/getting_started.md) for details.
 
 ## Submission
 
-Coming soon.
+### Submission site
+
+Please submit your result on our [evaluation server](https://huggingface.co/spaces/AGC2024-S/occupancy-and-flow-2024). The submission rule can be referred to [here](#rules-for-occupancy-challenge)
+
+### Submission format
+
+We define a standardized 3D occupancy prediction result format that serves as an input to the evaluation code. Results are evaluated for each sample. The 3D occupancy prediction results for a the test evaluation set are stored in a folder. The participant needs to zip the results folder and submit it to the official evaluation server.
+
+The submission must be a single `dict` with the following structure:
+
+```
+submission = {
+    'method': 'XXXXX',
+    'team': 'XXXXX',
+    'authors': "XXXXX",
+    'e-mail': "XXXXX",
+    'institution / company': "XXXXXXXXXX",
+    'country / region': "XXXXXXX",
+    'results': {
+        [scene_token1]: {
+            'pcd_cls' (np.ndarray): predicted class ID of shape (N) and type np.uint8,
+            'pcd_dist' (np.ndarray): predicted depth of shape (N) and type np.float16,
+            'pcd_flow' (np.ndarray): predicted flow of shape (N, 2) and type np.float16,
+        },
+        [scene_token2]: {
+            'pcd_cls' (np.ndarray): predicted class ID of shape (N) and type np.uint8,
+            'pcd_dist' (np.ndarray): predicted depth of shape (N) and type np.float16,
+            'pcd_flow' (np.ndarray): predicted flow of shape (N, 2) and type np.float16,
+        },
+        [scene_token3]: {
+            'pcd_cls' (np.ndarray): predicted class ID of shape (N) and type np.uint8,
+            'pcd_dist' (np.ndarray): predicted depth of shape (N) and type np.float16,
+            'pcd_flow' (np.ndarray): predicted flow of shape (N, 2) and type np.float16,
+        }
+        ...
+    }
+}
+```
+
+Below is an example of how to save the submission:
+
+```
+open('submission.gz', 'wb').write(gzip.compress(pickle.dumps(submission), mtime=0))
+```
+
+We provide example scripts based on mmdetection3d to generate the submission file, please refer to [getting_started](docs/getting_started.md) for details.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 

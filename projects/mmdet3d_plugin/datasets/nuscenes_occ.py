@@ -1,6 +1,9 @@
 import os
 import cv2
+import gzip
+import pickle
 import mmcv
+import torch
 import numpy as np
 from tqdm import tqdm
 from mmdet.datasets import DATASETS
@@ -9,10 +12,10 @@ from mmdet.datasets import DATASETS
 from nuscenes.eval.common.utils import quaternion_yaw, Quaternion
 from nuscenes.utils.geometry_utils import transform_matrix
 from .ray_metrics import main as ray_based_miou
+from .ray_metrics import process_one_sample, generate_lidar_rays
 from torch.utils.data import DataLoader
 from .nuscenes_ego_pose_loader import nuScenesDataset
 from nuscenes.nuscenes import NuScenes
-
 
 
 @DATASETS.register_module()
@@ -133,12 +136,11 @@ class NuSceneOcc(NuScenesDataset):
     def evaluate_miou(self, occ_results, runner=None, show_dir=None, **eval_kwargs):
         occ_gts = []
         flow_gts = []
+        occ_preds = []
+        flow_preds = []
         lidar_origins = []
 
         print('\nStarting Evaluation...')
-
-        sem_results = [r['occ_results'].cpu().numpy() for r in occ_results]
-        flow_results = [r['flow_results'].cpu().numpy() for r in occ_results]
 
         data_loader_kwargs={
             "pin_memory": False,
@@ -154,31 +156,90 @@ class NuSceneOcc(NuScenesDataset):
             **data_loader_kwargs,
         )
         
-        for i, batch in tqdm(enumerate(data_loader), ncols=50):
-            if i >= len(self.data_infos):
-                break
+        sample_tokens = [info['token'] for info in self.data_infos]
 
+        for i, batch in tqdm(enumerate(data_loader), ncols=50):
+            token = batch[0][0]
             output_origin = batch[1]
-            lidar_origins.append(output_origin)
-        
-            info = self.data_infos[i]
+            
+            data_id = sample_tokens.index(token)
+            info = self.data_infos[data_id]
+
             occ_gt = np.load(info['occ_path'], allow_pickle=True)
             gt_semantics = occ_gt['semantics']
             gt_flow = occ_gt['flow']
 
+            lidar_origins.append(output_origin)
             occ_gts.append(gt_semantics)
             flow_gts.append(gt_flow)
+            occ_preds.append(occ_results[data_id]['occ_results'].cpu().numpy())
+            flow_preds.append(occ_results[data_id]['flow_results'].cpu().numpy())
         
-        ray_based_miou(sem_results, occ_gts, flow_results, flow_gts, lidar_origins)
+        ray_based_miou(occ_preds, occ_gts, flow_preds, flow_gts, lidar_origins)
 
-    def format_results(self, occ_results,submission_prefix,**kwargs):
+    def format_results(self, occ_results, submission_prefix, **kwargs):
         if submission_prefix is not None:
             mmcv.mkdir_or_exist(submission_prefix)
 
-        for index, occ_pred in enumerate(tqdm(occ_results)):
-            info = self.data_infos[index]
-            sample_token = info['token']
-            save_path=os.path.join(submission_prefix,'{}.npz'.format(sample_token))
-            np.savez_compressed(save_path,occ_pred.astype(np.uint8))
+        result_dict = {}
+
+        data_loader_kwargs={
+            "pin_memory": False,
+            "shuffle": False,
+            "batch_size": 1,
+            "num_workers": 8,
+        }
+
+        nusc = NuScenes('v1.0-test', 'data/nuscenes')
+
+        data_loader = DataLoader(
+            nuScenesDataset(nusc, 'test'),
+            **data_loader_kwargs,
+        )
+
+        sample_tokens = [info['token'] for info in self.data_infos]
+
+        lidar_rays = generate_lidar_rays()
+        lidar_rays = torch.from_numpy(lidar_rays)
+
+        for index, batch in tqdm(enumerate(data_loader), ncols=50):
+            token = batch[0][0]
+            output_origin = batch[1]
+            
+            data_id = sample_tokens.index(token)
+
+            occ_pred = occ_results[data_id]
+            sem_pred = occ_pred['occ_results'].cpu().numpy()
+            sem_pred = np.reshape(sem_pred, [200, 200, 16])
+
+            flow_pred = occ_pred['flow_results'].cpu().numpy()
+            flow_pred = np.reshape(flow_pred, [200, 200, 16, 2])
+
+            pcd_pred = process_one_sample(sem_pred, lidar_rays, output_origin, flow_pred)
+
+            pcd_cls = pcd_pred[:, 0].astype(np.int8)
+            pcd_dist = pcd_pred[:, 1].astype(np.float16)
+            pcd_flow = pcd_pred[:, 2:4].astype(np.float16)
+
+            sample_dict = {
+                'pcd_cls': pcd_cls,
+                'pcd_dist': pcd_dist,
+                'pcd_flow': pcd_flow
+            }
+            result_dict.update({token: sample_dict})
+            
+        final_submission_dict = {
+            'method': 'XXXXX (Your method name)',
+            'team': 'XXXXX (Your team name)',
+            'authors': "XXXXX (Authors)",
+            'e-mail': "XXXXX (Your email)",
+            'institution / company': "XXXXXXXXXX (Your affiliation)",
+            'country / region': "XXXXXXX (Your country/region)",
+            'results': result_dict
+        }
+
+        save_path = os.path.join(submission_prefix, 'submission.gz')
+        with open(save_path, 'wb') as f:
+            f.write(gzip.compress(pickle.dumps(final_submission_dict), mtime=0))
 
         print('\nFinished.')
