@@ -37,7 +37,7 @@ export CUDA_VISIBLE_DEVICES=0
 
 ## Test Submission
 
-1. Fill your information in `projects/mmdet3d_plugin/datasets/nuscenes_occ.py` (Line 215).
+1. Fill your information in `projects/mmdet3d_plugin/datasets/nuscenes_occ.py` (Line 231).
 
 2. Test the baseline model on the test split with 8 GPUs, and generate the submission to the official evaluation server.
 

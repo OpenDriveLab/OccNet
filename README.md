@@ -45,6 +45,7 @@ If you use the challenge dataset in your paper, please consider citing OccNet wi
   - [Introduction](#introduction)
   - [News](#news)
   - [Task Definition](#task-definition)
+    - [Rules for Occupancy and Flow Challenge](#rules-for-occupancy-and-flow-challenge)
   - [Evaluation Metrics](#evaluation-metrics)
     - [Ray-based mIoU](#evaluation-metrics)
     - [AVE for Occupancy Flow](#evaluation-metrics)
@@ -61,6 +62,17 @@ If you use the challenge dataset in your paper, please consider citing OccNet wi
 ## Task Definition
 
 Given images from multiple cameras, the goal is to predict the semantics and flow of each voxel grid in the scene.
+
+### Rules for Occupancy and Flow Challenge
+
+* We allow using annotations provided in the nuScenes dataset. During inference, the input modality of the model should be camera only. 
+* No future frame is allowed during inference.
+* In order to check the compliance, we will ask the participants to provide technical reports to the challenge committee and the participant will be asked to provide a public talk about the method after winning the award.
+* Every submission provides method information. We encourage publishing code, but do not make it a requirement.
+* Each team can have at most one account on the evaluation server. Users that create multiple accounts to circumvent the rules will be excluded from the challenge.
+* Each team can submit at most three results during the challenge. 
+* Faulty submissions that return an error on HuggingFace do not count towards the submission limit.
+* Any attempt to circumvent these rules will result in a permanent ban of the team or company from the challenge.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -177,11 +189,9 @@ Please refer to [getting_started](docs/getting_started.md) for details.
 
 ### Submission site
 
-Please submit your result on our [evaluation server](https://huggingface.co/spaces/AGC2024-S/occupancy-and-flow-2024). The submission rule can be referred to [here](#rules-for-occupancy-challenge)
+Please submit your result on our [evaluation server](https://huggingface.co/spaces/AGC2024-S/occupancy-and-flow-2024). The submission rule can be referred to [here](#rules-for-occupancy-and-flow-challenge)
 
 ### Submission format
-
-We define a standardized 3D occupancy prediction result format that serves as an input to the evaluation code. Results are evaluated for each sample. The 3D occupancy prediction results for a the test evaluation set are stored in a folder. The participant needs to zip the results folder and submit it to the official evaluation server.
 
 The submission must be a single `dict` with the following structure:
 
@@ -194,17 +204,17 @@ submission = {
     'institution / company': "XXXXXXXXXX",
     'country / region': "XXXXXXX",
     'results': {
-        [scene_token1]: {
+        [sample_token1]: {
             'pcd_cls' (np.ndarray): predicted class ID of shape (N) and type np.uint8,
             'pcd_dist' (np.ndarray): predicted depth of shape (N) and type np.float16,
             'pcd_flow' (np.ndarray): predicted flow of shape (N, 2) and type np.float16,
         },
-        [scene_token2]: {
+        [sample_token2]: {
             'pcd_cls' (np.ndarray): predicted class ID of shape (N) and type np.uint8,
             'pcd_dist' (np.ndarray): predicted depth of shape (N) and type np.float16,
             'pcd_flow' (np.ndarray): predicted flow of shape (N, 2) and type np.float16,
         },
-        [scene_token3]: {
+        [sample_token3]: {
             'pcd_cls' (np.ndarray): predicted class ID of shape (N) and type np.uint8,
             'pcd_dist' (np.ndarray): predicted depth of shape (N) and type np.float16,
             'pcd_flow' (np.ndarray): predicted flow of shape (N, 2) and type np.float16,
