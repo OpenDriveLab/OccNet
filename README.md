@@ -98,25 +98,30 @@ OccScore = mIoU * 0.9 + max(1 - mAVE, 0.0) * 0.1
 
 ## OpenOcc Dataset
 
-### Basic Information
 <div align="center">
 
 <img src="./figs/occupancy.gif" width="600px">
 
-| Type |  Info |
-| :----: | :----: |
-| train           | 28,130 |
-| val             | 6,019 |
-| test            | 6,008 |
-| cameras         | 6 |
-| voxel size      | 0.4m |
-| range           | [-40m, -40m, -1m, 40m, 40m, 5.4m]|
-| volume size     | [200, 200, 16]|
-| #classes        | 0 - 16 |
-  
 </div>
 
+### Basic Information
+
 - The **nuScenes OpenOcc** dataset contains 17 classes. Voxel semantics for each sample frame is given as `[semantics]` in the labels.npz. Occupancy flow is given as `[flow]`  in the labels.npz.
+
+<div align="center">
+
+|  Type  |  Info  |
+| :----: | :----: |
+| train       | 28,130 |
+| val         | 6,019 |
+| test        | 6,008 |
+| cameras     | 6 |
+| voxel size  | 0.4m |
+| range       | [-40m, -40m, -1m, 40m, 40m, 5.4m] |
+| volume size | [200, 200, 16] |
+| #classes    | 0 - 16 |
+
+</div>
 
 ### Download
 
