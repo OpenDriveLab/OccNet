@@ -1,78 +1,54 @@
 <div id="top" align="center">
 
-# CVPR 2024 Autonomous Grand Challenge Occupancy and Flow
+# Occupancy and Flow Challenge
 
-<a href="https://twitter.com/OpenDriveLab" target="_blank">
-  <img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/OpenDriveLab?style=social&color=brightgreen&logo=twitter" />
-</a>
-<a href="#license">
-  <img alt="License: Apache2.0" src="https://img.shields.io/badge/license-Apache%202.0-blue.svg"/>
-</a>
+**The tutorial of `Occupancy and Flow` track for [CVPR 2024 Autonomous Grand Challenge](https://opendrivelab.com/challenge2024).**
 
-
-<img src="./figs/occupanc_1.gif" width="696px">
+<img src="./figs/occ_banner.jpeg" width="900px">
 
 </div>
+
+> - Official website: :globe_with_meridians: [AGC2024](https://opendrivelab.com/challenge2024/#occupancy_and_flow)
+> - Evaluation server: :hugs: [Hugging Face](https://huggingface.co/spaces/AGC2024-S/occupancy-and-flow-2024)
 
 ## Introduction
 
 Understanding the 3D surroundings including the background stuffs and foreground objects is important for autonomous driving. In the traditional 3D object detection task, a foreground object is represented by the 3D bounding box. However, the geometrical shape of the object is complex, which can not be represented by a simple 3D box, and the perception of the background stuffs is absent. The goal of this task is to predict the 3D occupancy of the scene. In this task, we provide a large-scale occupancy benchmark based on the nuScenes dataset. The benchmark is a voxelized representation of the 3D space, and the occupancy state and semantics of the voxel in 3D space are jointly estimated in this task. The complexity of this task lies in the dense prediction of 3D space given the surround-view images.
 
-If you use the challenge dataset in your paper, please consider citing OccNet with the following BibTex:
-
-```bibtex
-@article{sima2023_occnet,
-      title={Scene as Occupancy},
-      author={Chonghao Sima and Wenwen Tong and Tai Wang and Li Chen and Silei Wu and Hanming Deng and Yi Gu and Lewei Lu and Ping Luo and Dahua Lin and Hongyang Li},
-      year={2023},
-      eprint={2306.02851},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV}
-}
-```
-
-- Official website: :globe_with_meridians: [AGC2024](https://huggingface.co/spaces/AGC2024-S/occupancy-and-flow-2024)
-- Evaluation server: :hugs: [Hugging Face](https://huggingface.co/spaces/AGC2024-S/occupancy-and-flow-2024)
-
 ## News
+> :fire: We are organizing a sibling track in `China3DV`. Please check the [competition website](http://www.csig3dv.net/2024/competition.html) and [github repo](https://github.com/OpenDriveLab/LightwheelOcc/blob/main/docs/challenge_china3dv.md).  
+> :ice_cube: We release a 3D occupancy synthetic dataset `LightwheelOcc`, with dense **occupancy** and **depth** label and realistic sensor configuration simulating nuScenes dataset. [Check it out](https://github.com/OpenDriveLab/LightwheelOcc)!
 
-- 2024-03-01: The challenge begins.
-- 2024-03-14: We release a new version (`openocc_v2.1`) of the occupancy ground-truth, including some bug fixes regarding the occupancy flow. **Delete the old version and download the new one!** Please refer to [getting_started](docs/getting_started.md) for details.
+
+- **`2024/03/14`** We release a new version (`openocc_v2.1`) of the occupancy ground-truth, including some bug fixes regarding the occupancy flow. **Delete the old version and download the new one!** Please refer to [getting_started](docs/getting_started.md) for details.
+- **`2024/03/01`** The challenge begins.
 
 ## Table of Contents
 
-- [CVPR 2024 Autonomous Grand Challenge Occupancy and Flow](#cvpr-2024-occupancy-and-flow-challenge)
-  - [Introduction](#introduction)
-  - [News](#news)
-  - [Task Definition](#task-definition)
-    - [Rules for Occupancy and Flow Challenge](#rules-for-occupancy-and-flow-challenge)
-  - [Evaluation Metrics](#evaluation-metrics)
-    - [Ray-based mIoU](#evaluation-metrics)
-    - [AVE for Occupancy Flow](#evaluation-metrics)
-    - [Occupancy Score](#evaluation-metrics)
-  - [Data](#data)
-    - [Basic Information](#basic-information)
-    - [Download](#download)
-    - [Hierarchy](#hierarchy)
-    - [Known Issues](#known-issues)
-  - [Getting Started](#getting-started)
-  - [Submission](#submission)
-  - [License](#license)
+- [Introduction](#introduction)
+- [News](#news)
+- [Task Definition](#task-definition)
+- [Evaluation Metrics](#evaluation-metrics)
+- [OpenOcc Dataset](#openocc-dataset)
+- [Baseline](#baseline)
+- [Submission](#submission)
+- [License and Citation](#license-and-citation)
 
 ## Task Definition
 
 Given images from multiple cameras, the goal is to predict the semantics and flow of each voxel grid in the scene.
+The paticipants are required to submit their prediction on `nuScenes OpenOcc test` set.
 
 ### Rules for Occupancy and Flow Challenge
 
-* We allow using annotations provided in the nuScenes dataset. During inference, the input modality of the model should be camera only. 
-* No future frame is allowed during inference.
-* In order to check the compliance, we will ask the participants to provide technical reports to the challenge committee and the participant will be asked to provide a public talk about the method after winning the award.
-* Every submission provides method information. We encourage publishing code, but do not make it a requirement.
-* Each team can have at most one account on the evaluation server. Users that create multiple accounts to circumvent the rules will be excluded from the challenge.
-* Each team can submit at most three results during the challenge. 
-* Faulty submissions that return an error on HuggingFace do not count towards the submission limit.
-* Any attempt to circumvent these rules will result in a permanent ban of the team or company from the challenge.
+- We allow using annotations provided in the nuScenes dataset. During inference, the input modality of the model should be camera only. 
+- No future frame is allowed during inference.
+- In order to check the compliance, we will ask the participants to provide technical reports to the challenge committee and the participant will be asked to provide a public talk about the method after winning the award.
+- Every submission provides method information. We encourage publishing code, but do not make it a requirement.
+- Each team can have at most one account on the evaluation server. Users that create multiple accounts to circumvent the rules will be excluded from the challenge.
+- Each team can submit at most three results during the challenge. 
+- Faulty submissions that return an error on HuggingFace do not count towards the submission limit.
+- Any attempt to circumvent these rules will result in a permanent ban of the team or company from the challenge.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -120,11 +96,13 @@ OccScore = mIoU * 0.9 + max(1 - mAVE, 0.0) * 0.1
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-## Data
+## OpenOcc Dataset
 
 ### Basic Information
 <div align="center">
-  
+
+<img src="./figs/occupancy.gif" width="600px">
+
 | Type |  Info |
 | :----: | :----: |
 | train           | 28,130 |
@@ -138,18 +116,15 @@ OccScore = mIoU * 0.9 + max(1 - mAVE, 0.0) * 0.1
   
 </div>
 
-- The dataset contains 17 classes. Voxel semantics for each sample frame is given as `[semantics]` in the labels.npz. Occupancy flow is given as `[flow]`  in the labels.npz.
-
+- The **nuScenes OpenOcc** dataset contains 17 classes. Voxel semantics for each sample frame is given as `[semantics]` in the labels.npz. Occupancy flow is given as `[flow]`  in the labels.npz.
 
 ### Download
-
 
 1. Download the nuScenes dataset and put in into `data/nuscenes`
 
 2. Download our `openocc_v2.1.zip` and `infos.zip` from [OpenDataLab](https://opendatalab.com/OpenDriveLab/CVPR24-Occ-Flow-Challenge/tree/main) or [Google Drive](https://drive.google.com/drive/folders/1lpqjXZRKEvNHFhsxTf0MOE13AZ3q4bTq)
 
 3. Unzip them in `data/nuscenes`
-
 
 ### Hierarchy
 
@@ -160,24 +135,24 @@ nuscenes
 ├── maps
 ├── nuscenes_infos_train_occ.pkl
 ├── nuscenes_infos_val_occ.pkl
+├── nuscenes_infos_test_occ.pkl
 ├── openocc_v2
 ├── samples
-├── sweeps
 ├── v1.0-test
 └── v1.0-trainval
 ```
 
 - `openocc_v2` is the occuapncy GT.
-- `nuscenes_infos_train_occ.pkl` and `nuscenes_infos_val_occ.pkl` contains meta infos of the dataset.
+- `nuscenes_infos_{train/val/test}_occ.pkl` contains meta infos of the dataset.
 - Other folders are borrowed from the official nuScenes dataset.
 
 ### Known Issues
 
-- Nuscene ([issues-721](https://github.com/nutonomy/nuscenes-devkit/issues/721)) lacks translation in the z-axis, which makes it hard to recover accurate 6d localization and would lead to the misalignment of point clouds while accumulating them over whole scenes. Ground stratification occurs in several data.
+- nuScenes ([issue #721](https://github.com/nutonomy/nuscenes-devkit/issues/721)) lacks translation in the z-axis, which makes it hard to recover accurate 6d localization and would lead to the misalignment of point clouds while accumulating them over whole scenes. Ground stratification occurs in several data.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-## Getting Started
+## Baseline
 
 We provide a baseline model based on [BEVFormer](https://github.com/fundamentalvision/BEVFormer).
 
@@ -187,38 +162,24 @@ Please refer to [getting_started](docs/getting_started.md) for details.
 
 ## Submission
 
-### Submission site
-
-Please submit your result on our [evaluation server](https://huggingface.co/spaces/AGC2024-S/occupancy-and-flow-2024). The submission rule can be referred to [here](#rules-for-occupancy-and-flow-challenge)
-
 ### Submission format
 
 The submission must be a single `dict` with the following structure:
 
 ```
 submission = {
-    'method': 'XXXXX',
-    'team': 'XXXXX',
-    'authors': "XXXXX",
-    'e-mail': "XXXXX",
-    'institution / company': "XXXXXXXXXX",
-    'country / region': "XXXXXXX",
+    'method': '',                           <str> -- name of the method
+    'team': '',                             <str> -- name of the team, identical to the Google Form
+    'authors': ['']                         <list> -- list of str, authors
+    'e-mail': '',                           <str> -- e-mail address
+    'institution / company': '',            <str> -- institution or company
+    'country / region': '',                 <str> -- country or region, checked by iso3166*
     'results': {
-        [sample_token1]: {
-            'pcd_cls' (np.ndarray): predicted class ID of shape (N) and type np.uint8,
-            'pcd_dist' (np.ndarray): predicted depth of shape (N) and type np.float16,
-            'pcd_flow' (np.ndarray): predicted flow of shape (N, 2) and type np.float16,
+        [token]: {                          <str> -- frame (sample) token
+            'pcd_cls'                       <np.ndarray> [N] -- predicted class ID, np.uint8,
+            'pcd_dist'                      <np.ndarray> [N] -- predicted depth, np.float16,
+            'pcd_flow'                      <np.ndarray> [N, 2] -- predicted flow, np.float16,
         },
-        [sample_token2]: {
-            'pcd_cls' (np.ndarray): predicted class ID of shape (N) and type np.uint8,
-            'pcd_dist' (np.ndarray): predicted depth of shape (N) and type np.float16,
-            'pcd_flow' (np.ndarray): predicted flow of shape (N, 2) and type np.float16,
-        },
-        [sample_token3]: {
-            'pcd_cls' (np.ndarray): predicted class ID of shape (N) and type np.uint8,
-            'pcd_dist' (np.ndarray): predicted depth of shape (N) and type np.float16,
-            'pcd_flow' (np.ndarray): predicted flow of shape (N, 2) and type np.float16,
-        }
         ...
     }
 }
@@ -226,17 +187,32 @@ submission = {
 
 Below is an example of how to save the submission:
 
-```
-open('submission.gz', 'wb').write(gzip.compress(pickle.dumps(submission), mtime=0))
+``` python
+import pickle, gzip
+
+with gzip.GzipFile('submission.pkl', 'wb', compresslevel=9) as f:
+    pickle.dump(submission, f, protocol=pickle.HIGHEST_PROTOCOL)
 ```
 
-We provide example scripts based on mmdetection3d to generate the submission file, please refer to [getting_started](docs/getting_started.md) for details.
+We provide example scripts based on mmdetection3d to generate the submission file, please refer to [baseline](docs/getting_started.md) for details.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-## License
+## License and Citation
 
-Before using the dataset, you should register on the website and agree to the terms of use of the [nuScenes](https://www.nuscenes.org/nuscenes).
-All code within this repository is under [Apache 2.0 License](./LICENSE).
+If you use the challenge dataset in your paper, please consider citing OccNet with the following BibTex:
+
+```bibtex
+@article{sima2023_occnet,
+    title={Scene as Occupancy},
+    author={Chonghao Sima and Wenwen Tong and Tai Wang and Li Chen and Silei Wu and Hanming Deng and Yi Gu and Lewei Lu and Ping Luo and Dahua Lin and Hongyang Li},
+    year={2023},
+    eprint={2306.02851},
+    archivePrefix={arXiv},
+    primaryClass={cs.CV}
+}
+```
+
+This dataset is under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) license. Before using the dataset, you should register on the website and agree to the terms of use of the [nuScenes](https://www.nuscenes.org/nuscenes).  All code within this repository is under [Apache 2.0 License](./LICENSE).
 
 <p align="right">(<a href="#top">back to top</a>)</p>
