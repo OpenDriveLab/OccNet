@@ -14,8 +14,8 @@ from nuscenes.utils.geometry_utils import transform_matrix
 from .ray_metrics import main as ray_based_miou
 from .ray_metrics import process_one_sample, generate_lidar_rays
 from torch.utils.data import DataLoader
-from .nuscenes_ego_pose_loader import nuScenesDataset
 from nuscenes.nuscenes import NuScenes
+from ....tools.ray_iou.ego_pose_extractor import EgoPoseDataset
 
 
 @DATASETS.register_module()
@@ -41,8 +41,7 @@ class NuSceneOcc(NuScenesDataset):
         data = mmcv.load(ann_file)
         # self.train_split=data['train_split']
         # self.val_split=data['val_split']
-        data_infos = list(sorted(data['infos'], key=lambda e: e['timestamp']))
-        data_infos = data_infos[::self.load_interval]
+        data_infos = data['infos'][::self.load_interval]
         self.metadata = data['metadata']
         self.version = self.metadata['version']
         return data_infos
@@ -70,8 +69,8 @@ class NuSceneOcc(NuScenesDataset):
         # standard protocal modified from SECOND.Pytorch
         input_dict = dict(
             sample_idx=info['token'],
-            pts_filename=info['lidar_path'],
-            sweeps=info['sweeps'],
+            pts_filename=info['lidar_path'] if 'lidar_path' in info else '',
+            sweeps=info['sweeps'] if 'sweeps' in info else [],
             ego2global_translation=info['ego2global_translation'],
             ego2global_rotation=info['ego2global_rotation'],
             timestamp=info['timestamp'] / 1e6,
@@ -89,15 +88,22 @@ class NuSceneOcc(NuScenesDataset):
             lidar2cam_rts = []
             cam_intrinsics = []
             for cam_type, cam_info in info['cams'].items():
-                image_paths.append(cam_info['data_path'])
+                if 'LightwheelOcc' in self.version:
+                    image_paths.append(os.path.join(self.data_root, cam_info['cam_path']))
+                else:
+                    image_paths.append(cam_info['data_path'])
                 # obtain lidar to image transformation matrix
-                lidar2cam_r = np.linalg.inv(cam_info['sensor2lidar_rotation'])
+                if 'LightwheelOcc' in self.version:
+                    lidar2cam_r = np.linalg.inv(Quaternion(cam_info['sensor2lidar_rotation']).rotation_matrix)
+                else:
+                    lidar2cam_r = np.linalg.inv(cam_info['sensor2lidar_rotation'])
+
                 lidar2cam_t = cam_info[
                                   'sensor2lidar_translation'] @ lidar2cam_r.T
                 lidar2cam_rt = np.eye(4)
                 lidar2cam_rt[:3, :3] = lidar2cam_r.T
                 lidar2cam_rt[3, :3] = -lidar2cam_t
-                intrinsic = cam_info['cam_intrinsic']
+                intrinsic = np.array(cam_info['cam_intrinsic'], dtype=np.float32)
                 viewpad = np.eye(4)
                 viewpad[:intrinsic.shape[0], :intrinsic.shape[1]] = intrinsic
                 lidar2img_rt = (viewpad @ lidar2cam_rt.T)
@@ -142,6 +148,11 @@ class NuSceneOcc(NuScenesDataset):
 
         print('\nStarting Evaluation...')
 
+        if 'LightwheelOcc' in self.version:
+            ego_pose_dataset = EgoPoseDataset(self.data_infos, dataset_type='lightwheelocc')
+        else:
+            ego_pose_dataset = EgoPoseDataset(self.data_infos, dataset_type='openocc_v2')
+
         data_loader_kwargs={
             "pin_memory": False,
             "shuffle": False,
@@ -149,10 +160,8 @@ class NuSceneOcc(NuScenesDataset):
             "num_workers": 8,
         }
 
-        nusc = NuScenes('v1.0-trainval', 'data/nuscenes')
-
         data_loader = DataLoader(
-            nuScenesDataset(nusc, 'val'),
+            ego_pose_dataset,
             **data_loader_kwargs,
         )
         
@@ -183,6 +192,11 @@ class NuSceneOcc(NuScenesDataset):
 
         result_dict = {}
 
+        if 'LightwheelOcc' in self.version:
+            ego_pose_dataset = EgoPoseDataset(self.data_infos, dataset_type='lightwheelocc')
+        else:
+            ego_pose_dataset = EgoPoseDataset(self.data_infos, dataset_type='openocc_v2')
+
         data_loader_kwargs={
             "pin_memory": False,
             "shuffle": False,
@@ -190,10 +204,8 @@ class NuSceneOcc(NuScenesDataset):
             "num_workers": 8,
         }
 
-        nusc = NuScenes('v1.0-test', 'data/nuscenes')
-
         data_loader = DataLoader(
-            nuScenesDataset(nusc, 'test'),
+            ego_pose_dataset,
             **data_loader_kwargs,
         )
 

@@ -203,6 +203,22 @@ We provide example scripts based on mmdetection3d to generate the submission fil
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
+### Working with your own codebase
+
+We understand that many participants may use your own codebases. Here, we provide a simple standlone package that converts your occupancy predictions to the submission format. Please follows the steps below:
+
+1. Save the prediction results on `nuScenes OpenOcc val` locally, in the same format as the occupancy ground truth.
+2. Perform ray projection locally and save the projection results.
+```
+cd tools/ray_iou
+python ray_casting.py --pred-root your_prediction
+```
+3. Test whether the evaluation on `nuScenes OpenOcc val` meets expectations locally.
+```
+python metric.py --pred output/my_pred_pcd.gz --gt output/nuscenes_infos_val_occ_pcd.gz
+```
+4. Save and project the prediction results of `nuScenes OpenOcc test` according to steps 1 and 2, and upload them to the competition server.
+
 ## License and Citation
 
 If you use the challenge dataset in your paper, please consider citing OccNet with the following BibTex:

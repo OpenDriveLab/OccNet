@@ -46,3 +46,6 @@ pyrightconfig.json
 data
 ckpts
 work_dirs
+occ_submission
+*.npz
+*.gz

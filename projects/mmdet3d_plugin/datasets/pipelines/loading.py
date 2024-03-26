@@ -1,3 +1,4 @@
+import os
 import numpy as np
 from mmdet.datasets.builder import PIPELINES
 
@@ -18,9 +19,14 @@ class LoadOccGTFromFile(object):
         pass
 
     def __call__(self, results):
-        occ_labels = np.load(results['occ_path'])
-        semantics = occ_labels['semantics']
-        flow = occ_labels['flow']
+        if results['occ_path'] is not None and os.path.exists(results['occ_path']):
+            occ_labels = np.load(results['occ_path'])
+            semantics = occ_labels['semantics']
+            flow = occ_labels['flow']
+        else:
+            semantics = np.zeros([200, 200, 16], dtype=np.uint8)
+            flow = np.zeros([200, 200, 16, 2], dtype=np.float32)
+        
         results['voxel_semantics'] = semantics
         results['voxel_flow'] = flow
 
