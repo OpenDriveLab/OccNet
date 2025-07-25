@@ -42,7 +42,7 @@ Understanding the 3D surroundings including the background stuffs and foreground
 ## Task Definition
 
 Given images from multiple cameras, the goal is to predict the semantics and flow of each voxel grid in the scene.
-The paticipants are required to submit their prediction on `nuScenes OpenOcc test` set.
+The participants are required to submit their prediction on `nuScenes OpenOcc test` set.
 
 ### Rules for Occupancy and Flow Challenge
 
@@ -151,7 +151,7 @@ nuscenes
 └── v1.0-trainval
 ```
 
-- `openocc_v2` is the occuapncy GT.
+- `openocc_v2` is the occupancy GT.
 - `nuscenes_infos_{train/val/test}_occ.pkl` contains meta infos of the dataset.
 - Other folders are borrowed from the official nuScenes dataset.
 
@@ -209,7 +209,7 @@ We provide example scripts based on mmdetection3d to generate the submission fil
 
 ### Working with your own codebase
 
-We understand that many participants may use your own codebases. Here, we provide a simple standlone package that converts your occupancy predictions to the submission format. Please follows the steps below:
+We understand that many participants may use your own codebases. Here, we provide a simple standalone package that converts your occupancy predictions to the submission format. Please follows the steps below:
 
 1. Save the prediction results on `nuScenes OpenOcc val` locally, in the same format as the occupancy ground truth.
 2. Perform ray projection locally and save the projection results.
